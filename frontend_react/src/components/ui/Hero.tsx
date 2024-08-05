@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import hero from "/public/hero.jpg"
+import hero from "/public/hero.jpeg"
 import Image from "next/image"
 
 export default function Hero() {
