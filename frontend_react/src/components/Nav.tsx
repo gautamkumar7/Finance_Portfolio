@@ -1,7 +1,7 @@
 import React from 'react';
 import { BellDot } from 'lucide-react';
 import Image from 'next/image';
-import hero from '/public/hero.jpg';
+import hero from '/public/hero.jpeg';
 
 const Nav = () => {
     return (
