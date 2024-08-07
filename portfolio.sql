@@ -1,36 +1,23 @@
-CREATE DATABASE portfolio;
+create database portfolio;
 
-USE portfolio;
+use portfolio;
 
-CREATE TABLE Stocks (
-    StockID int NOT NULL PRIMARY KEY,
-	TickerSymbol varchar(10),
-    CompanyName varchar(100),
-    Industry varchar(50),
-	CurrentPrice decimal(18,6)
+drop table transactions;
+
+
+
+CREATE TABLE transactions (
+    transaction_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    transaction_type VARCHAR(10),
+    transaction_date DATE,
+    quantity INT,
+    price_per_quantity DECIMAL(18,6),
+    total_value DECIMAL(18,6),
+    investment_type VARCHAR(50)
 );
 
-CREATE TABLE Transactions (
-    TransID int NOT NULL PRIMARY KEY,
-    StockID int,
-	TransType varchar(10),
-    TransDate date,
-    Quantity int,
-	PricePerShare decimal(18,6),
-	TotalValue decimal(18,6),
-    FOREIGN KEY (StockID) REFERENCES Stocks(StockID)
-);
+delete from transactions;
 
-
-CREATE TABLE MarketData (
-    MarketDataID int NOT NULL PRIMARY KEY,
-    StockID int,
-	MarketDate date,
-    OpeningPrice decimal(18,6),
-	ClosingPrice decimal(18,6),
-    HighPrice decimal(18,6),
-    LowPrice decimal(18,6),
-    Volume int,
-    FOREIGN KEY (StockID) REFERENCES Stocks(StockID)
-);
-
+INSERT INTO transactions (transaction_type, quantity, price_per_quantity, investment_type)
+VALUES ('BUY', 10, 100.64, 'STOCK');
+select * from transactions;
