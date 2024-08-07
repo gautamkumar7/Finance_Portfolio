@@ -14,7 +14,7 @@ export default function Hero() {
               <div className="flex flex-col justify-center space-y-4">
                 <div className="space-y-2">
                   <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                    Effortless Portfolio Management
+                    PortfolioX
                   </h1>
                   <p className="max-w-[600px] text-muted-foreground md:text-xl">
                     Streamline your investment portfolio with our powerful platform. Track performance, analyze trends,
