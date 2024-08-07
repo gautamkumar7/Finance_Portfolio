@@ -4,7 +4,7 @@ from services.portfolio_service import PortfolioService
 portfolio_bp = Blueprint('portfolio', __name__)
 
 
-@portfolio_bp.route('/networth', methods=['GET'])
+@portfolio_bp.route('/networth', methods=['GET'])#tested
 def get_networth():
     portfolio = PortfolioService.get_latest_portfolio()
     if portfolio:
