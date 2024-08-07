@@ -1,5 +1,5 @@
 # pip install -r requirements.txt
-#to get all dependencies
+# to get all dependencies
 pandas
 yfinance
 mysql-connector-python
