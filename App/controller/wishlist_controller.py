@@ -1,57 +1,33 @@
-# controller/wishlist_controller.py
-from flasgger import swag_from
 from flask import Blueprint, jsonify, request
-
-from services.wishlist_service import WishlistService  # Import the WishlistService
+from services.wishlist_service import WishlistService
 
 wishlist_bp = Blueprint('wishlist', __name__)
 
-
 @wishlist_bp.route('/wishlist', methods=['GET'])
-@swag_from({
-    'parameters': [
-        {
-            'name': 'number',
-            'in': 'query',
-            'type': 'integer',
-            'required': True,
-            'description': 'The number representing the type of wishlist (1 or 2)'
-        }
-    ],
-    'responses': {
-        200: {
-            'description': 'A list of wishlist items',
-            'schema': {
-                'type': 'array',
-                'items': {
-                    'type': 'object',
-                    'properties': {
-                        'id': {'type': 'integer'},
-                        'stock_name': {'type': 'string'},
-                        'current_price': {'type': 'number'}
-                    }
-                }
-            }
-        },
-        400: {
-            'description': 'Invalid number parameter'
-        },
-        404: {
-            'description': 'No wishlist data found'
-        }
-    }
-})
 def get_wishlist():
     number = request.args.get('number', type=int)
-    if number not in [1, 2]:
-        return jsonify({'error': 'Invalid number parameter'}), 400
+    if number is None:
+        return jsonify({'error': 'Number parameter is required'}), 400
 
-    wishlist = WishlistService.get_wishlist(number)
-    if wishlist:
-        return jsonify([{
-            'id': item.id,
-            'stock_name': item.stock_name,
-            'current_price': round(item.current_price, 2)
-        } for item in wishlist]), 200
+    wishlist_items = WishlistService.get_wishlist(number)
+    return jsonify([{
+        'number': item.number,
+        'stock_name': item.stock_name,
+        'current_price': item.current_price
+    } for item in wishlist_items]), 200
+
+@wishlist_bp.route('/wishlist', methods=['POST'])
+def add_to_wishlist():
+    data = request.get_json()
+    number = data.get('number')
+    stock_name = data.get('stock_name')
+    current_price = data.get('current_price')
+
+    if number not in [1, 2] or not stock_name or current_price is None:
+        return jsonify({'error': 'Invalid input data'}), 400
+
+    success = WishlistService.add_to_wishlist(number, stock_name, current_price)
+    if success:
+        return jsonify({'message': 'Item added to wishlist successfully'}), 201
     else:
-        return jsonify({'error': 'No wishlist data found'}), 404
+        return jsonify({'error': 'Failed to add item to wishlist'}), 500
