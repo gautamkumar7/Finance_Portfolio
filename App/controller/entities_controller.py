@@ -45,14 +45,23 @@ def buy_entity():
 
 @entities_bp.route('/entities/sell', methods=['POST'])
 def sell_entity():
-    data = request.get_json()
+    data = request.json
     name = data.get('name')
     quantity = data.get('quantity')
+    sell_price = data.get('sell_price')
 
-    if not name or not quantity:
-        return jsonify({'error': 'Name and quantity are required'}), 400
+    if not name or not quantity or not sell_price:
+        return jsonify({'error': 'Missing required parameters'}), 400
 
-    success, message = EntityService.sell_entity(name, quantity)
+    # Ensure quantity and sell_price are valid numbers
+    try:
+        quantity = int(quantity)
+        sell_price = float(sell_price)
+    except ValueError:
+        return jsonify({'error': 'Invalid quantity or sell_price format'}), 400
+
+    success, message = EntityService.sell_entity(name=name, quantity=quantity, sell_price=sell_price)
+
     if success:
         return jsonify({'message': message}), 200
     else:

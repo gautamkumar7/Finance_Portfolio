@@ -1,6 +1,10 @@
+from datetime import datetime
+
 from supabase import create_client, Client
 import os
 from dotenv import load_dotenv
+
+from model.PnL import PnL
 from model.entities import Entity
 
 # Load environment variables from .env file
@@ -69,7 +73,7 @@ class EntityService:
             return True, 'Entity created and inserted into the database.'
 
     @staticmethod
-    def sell_entity(name, quantity):
+    def sell_entity(name, quantity, sell_price):
         response = supabase.table('entities').select('*').eq('name', name).execute()
 
         if response.data:
@@ -82,12 +86,46 @@ class EntityService:
             # Calculate the remaining quantity
             remaining_quantity = entity.quantity - quantity
 
-            # Update only the quantity field
+            # Calculate the realised profit/loss
+            realised_pl = (sell_price - entity.avg_buy_price) * quantity
+
+            # Update the quantity field in the entities table
             updates = {
                 'quantity': remaining_quantity
             }
-
             supabase.table('entities').update(updates).eq('entity_id', entity.entity_id).execute()
+
+            # Update realised_pl in the latest row of the P&L table
+            EntityService.update_realised_pl(realised_pl)
+
             return True, 'Entity sold successfully and updated in the database.'
         else:
             return False, 'Entity not found.'
+
+    @staticmethod
+    def update_realised_pl(realised_pl):
+        # Fetch the last row in the P&L table ordered by date (stored as a string)
+        response = supabase.table('pnl').select('*').order('date', desc=True).limit(1).execute()
+
+        if response.data:
+            last_row = response.data[0]
+            last_row_id = last_row['id']
+
+            # Update realised_pl in the latest row
+            new_realised_pl = last_row['realised_pl'] + realised_pl
+            supabase.table('pnl').update({'realised_pl': new_realised_pl}).eq('id', last_row_id).execute()
+        else:
+            # Handle case where there's no row in the table yet (optional)
+            pass
+
+    @staticmethod
+    def insert_daily_pl_row():
+        # Insert a new row into the P&L table daily with default values
+        today = datetime.now().date().isoformat()  # Convert date to string
+        new_row = PnL(
+            id=None,  # Assuming auto-increment ID
+            date=today,  # Date as a string
+            realised_pl=0.0,
+            unrealised_pl=0.0
+        )
+        supabase.table('pnl').insert(new_row.__dict__).execute()
