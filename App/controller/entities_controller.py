@@ -26,34 +26,34 @@ def get_entities_by_sector(sector):
         return jsonify({'error': 'No entities found for the specified sector'}), 404
 
 
-@entities_bp.route('/entities', methods=['POST'])
-def add_entity():
-    data = request.json
-    entity = EntityService.add_entity(
-        type=data['type'],
-        name=data['name'],
-        quantity=data['quantity'],
-        avg_buy_price=data['avg_buy_price'],
-        current_price=data['current_price'],
-        sector=data['sector'],
-        transaction_id=data['transaction_id'],
-        transaction_type=data['transaction_type']  # Include transaction_type
-    )
-    if entity:
-        return jsonify(entity.__dict__), 201
-    else:
-        return jsonify({'error': 'Failed to create entity'}), 400
+@entities_bp.route('/entities/buy', methods=['POST'])
+def buy_entity():
+    data = request.get_json()
+    name = data.get('name')
+    quantity = data.get('quantity')
+    price = data.get('price')
 
-@entities_bp.route('/entities/<int:entity_id>', methods=['PUT'])
-def update_entity(entity_id):
-    data = request.json
-    entity = EntityService.update_entity(entity_id, **data)
-    if entity:
-        return jsonify(entity.__dict__), 200
-    else:
-        return jsonify({'error': 'Entity not found or update failed'}), 404
+    if not name or not quantity or not price:
+        return jsonify({'error': 'Name, quantity, and price are required'}), 400
 
-@entities_bp.route('/entities/<int:entity_id>', methods=['DELETE'])
-def delete_entity(entity_id):
-    EntityService.delete_entity(entity_id)
-    return '', 204
+    success, message = EntityService.buy_entity(name, quantity, price)
+    if success:
+        return jsonify({'message': message}), 200
+    else:
+        return jsonify({'error': message}), 400
+
+
+@entities_bp.route('/entities/sell', methods=['POST'])
+def sell_entity():
+    data = request.get_json()
+    name = data.get('name')
+    quantity = data.get('quantity')
+
+    if not name or not quantity:
+        return jsonify({'error': 'Name and quantity are required'}), 400
+
+    success, message = EntityService.sell_entity(name, quantity)
+    if success:
+        return jsonify({'message': message}), 200
+    else:
+        return jsonify({'error': message}), 400

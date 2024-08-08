@@ -34,30 +34,48 @@ class EntityService:
         return None
 
     @staticmethod
-    def add_entity(type, name, quantity, avg_buy_price, current_price, sector, transaction_id, transaction_type):
-        entity = {
-            'type': type,
-            'name': name,
-            'quantity': quantity,
-            'avg_buy_price': avg_buy_price,
-            'current_price': current_price,
-            'sector': sector,
-            'transaction_id': transaction_id,
-            'transaction_type': transaction_type  # Include transaction_type
-        }
-        response = supabase.table('entities').insert(entity).execute()
+    def buy_entity(name, quantity, price):
+        response = supabase.table('entities').select('*').eq('name', name).execute()
+
         if response.data:
-            return Entity(**response.data[0])
-        return None
+            entity_data = response.data[0]
+            entity = Entity(**entity_data)
+
+            # Calculate the new total quantity and average buy price
+            total_quantity = entity.quantity + quantity
+            avg_buy_price = ((entity.quantity * entity.avg_buy_price) + (quantity * price)) / total_quantity
+
+            # Update only the necessary fields
+            updates = {
+                'quantity': total_quantity,
+                'avg_buy_price': avg_buy_price
+            }
+
+            supabase.table('entities').update(updates).eq('entity_id', entity.entity_id).execute()
+            return True, 'Entity bought successfully and updated in the database.'
+        else:
+            return False, 'Entity not found.'
 
     @staticmethod
-    def update_entity(entity_id, **kwargs):
-        response = supabase.table('entities').update(kwargs).eq('entity_id', entity_id).execute()
+    def sell_entity(name, quantity):
+        response = supabase.table('entities').select('*').eq('name', name).execute()
+
         if response.data:
-            return Entity(**response.data[0])
-        return None
+            entity_data = response.data[0]
+            entity = Entity(**entity_data)
 
+            if entity.quantity < quantity:
+                return False, 'Insufficient quantity available to sell.'
 
-    @staticmethod
-    def delete_entity(entity_id):
-        supabase.table('entities').delete().eq('entity_id', entity_id).execute()
+            # Calculate the remaining quantity
+            remaining_quantity = entity.quantity - quantity
+
+            # Update only the quantity field
+            updates = {
+                'quantity': remaining_quantity
+            }
+
+            supabase.table('entities').update(updates).eq('entity_id', entity.entity_id).execute()
+            return True, 'Entity sold successfully and updated in the database.'
+        else:
+            return False, 'Entity not found.'
