@@ -1,0 +1,26 @@
+
+
+post - http://127.0.0.1:5000/api/transactions
+
+{
+    "id": 1,
+    "action": "Buy",
+    "date": "2024-08-08",
+    "type": "Stock",
+    "entity_name": "Google",
+    "quantity": 10,
+    "price": 12.34,
+    "total_value": 120.34
+}
+
+post - http://127.0.0.1:5000/api/entities
+{
+
+    "type": "stock",
+    "name": "Google",
+    "quantity": 10,
+    "avg_buy_price": 120.989,
+    "current_price": 119.34,
+    "sector": "tech",
+    "transaction_id": 4
+}
