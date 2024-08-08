@@ -27,7 +27,14 @@ class EntityService:
         return None
 
     @staticmethod
-    def add_entity(type, name, quantity, avg_buy_price, current_price, sector, transaction_id):
+    def get_entities_by_sector(sector):
+        response = supabase.table('entities').select('*').eq('sector', sector).execute()
+        if response.data:
+            return response.data
+        return None
+
+    @staticmethod
+    def add_entity(type, name, quantity, avg_buy_price, current_price, sector, transaction_id, transaction_type):
         entity = {
             'type': type,
             'name': name,
@@ -35,7 +42,8 @@ class EntityService:
             'avg_buy_price': avg_buy_price,
             'current_price': current_price,
             'sector': sector,
-            'transaction_id': transaction_id
+            'transaction_id': transaction_id,
+            'transaction_type': transaction_type  # Include transaction_type
         }
         response = supabase.table('entities').insert(entity).execute()
         if response.data:
@@ -48,6 +56,7 @@ class EntityService:
         if response.data:
             return Entity(**response.data[0])
         return None
+
 
     @staticmethod
     def delete_entity(entity_id):

@@ -16,6 +16,16 @@ def get_entity(entity_id):
     else:
         return jsonify({'error': 'Entity not found'}), 404
 
+
+@entities_bp.route('/entities/sector/<string:sector>', methods=['GET'])
+def get_entities_by_sector(sector):
+    entities = EntityService.get_entities_by_sector(sector)
+    if entities:
+        return jsonify(entities), 200
+    else:
+        return jsonify({'error': 'No entities found for the specified sector'}), 404
+
+
 @entities_bp.route('/entities', methods=['POST'])
 def add_entity():
     data = request.json
@@ -26,7 +36,8 @@ def add_entity():
         avg_buy_price=data['avg_buy_price'],
         current_price=data['current_price'],
         sector=data['sector'],
-        transaction_id=data['transaction_id']
+        transaction_id=data['transaction_id'],
+        transaction_type=data['transaction_type']  # Include transaction_type
     )
     if entity:
         return jsonify(entity.__dict__), 201

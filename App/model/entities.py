@@ -10,3 +10,4 @@ class Entity:
     current_price: float
     sector: str
     transaction_id: int
+    transaction_type: str  # New field
