@@ -27,7 +27,7 @@ const Nav = () => {
             <div className="absolute left-1/2 transform -translate-x-1/2 w-3/5 -bottom-6">
                 <div className="bg-white rounded-md shadow-md px-6 py-3">
                     <ul className="flex space-x-6 text-gray-700">
-                        <li>Holdings</li>
+                        <li>Investments</li>
                         <li>Markets</li>
                         <li>News</li>
                     </ul>

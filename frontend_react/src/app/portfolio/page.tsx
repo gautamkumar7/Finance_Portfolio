@@ -168,7 +168,7 @@ const Page = () => {
         <div className="flex w-full items-center justify-center">
           <div className="bg-white shadow rounded-lg p-4 w-3/4">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold text-gray-700">Your Investments</h2>
+              <h2 className="text-lg font-semibold text-gray-700">Holdings</h2>
               <Button
                 variant="outline"
                 className="text-slate-600 border-slate-900"

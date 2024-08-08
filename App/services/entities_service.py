@@ -38,6 +38,7 @@ class EntityService:
         response = supabase.table('entities').select('*').eq('name', name).execute()
 
         if response.data:
+            # Entity exists, update its quantity and avg_buy_price
             entity_data = response.data[0]
             entity = Entity(**entity_data)
 
@@ -54,7 +55,18 @@ class EntityService:
             supabase.table('entities').update(updates).eq('entity_id', entity.entity_id).execute()
             return True, 'Entity bought successfully and updated in the database.'
         else:
-            return False, 'Entity not found.'
+            # Entity doesn't exist, insert it into the database
+            new_entity = {
+                'name': name,
+                'quantity': quantity,
+                'avg_buy_price': price,  # First buy, so avg_buy_price is the price itself
+                'type': 'Stock',  # Assuming default type, can be parameterized
+                'current_price': price,  # Setting current_price as the buy price for now
+                'sector': 'Unknown'  # Default sector, can be parameterized or updated later
+            }
+
+            supabase.table('entities').insert(new_entity).execute()
+            return True, 'Entity created and inserted into the database.'
 
     @staticmethod
     def sell_entity(name, quantity):
