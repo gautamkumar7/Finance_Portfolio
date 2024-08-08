@@ -3,3 +3,8 @@
 pandas
 yfinance
 mysql-connector-python
+flask
+supabase
+python-dotenv
+flasgger
+httpx[http2]
