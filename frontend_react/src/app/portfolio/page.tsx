@@ -171,9 +171,9 @@ const Page = () => {
               <h2 className="text-lg font-semibold text-gray-700">Your Investments</h2>
               <Button
                 variant="outline"
-                className="text-purple-600 border-purple-600"
+                className="text-slate-600 border-slate-900"
               >
-                <DownloadIcon className="mr-2 h-4 w-4" />
+                <DownloadIcon className="mr-2 h-4 w-4 text-slate-800" />
                 Download Statement
               </Button>
             </div>
