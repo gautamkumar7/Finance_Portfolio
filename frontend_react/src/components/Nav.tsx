@@ -2,6 +2,7 @@ import React from 'react';
 import { BellDot } from 'lucide-react';
 import Image from 'next/image';
 import hero from '/public/hero.jpeg';
+import landing from '/public/landing.jpeg'
 import Link from 'next/link';
 
 const Nav = () => {
