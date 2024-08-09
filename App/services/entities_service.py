@@ -70,7 +70,7 @@ class EntityService:
                 'name': name,
                 'quantity': quantity,
                 'avg_buy_price': price,  # First buy, so avg_buy_price is the price itself
-                'type': 'Stock',  # Assuming default type, can be parameterized
+                'type': 'STOCK',  # Assuming default type, can be parameterized
                 'current_price': price,  # Setting current_price as the buy price for now
                 'sector': 'Unknown'  # Default sector, can be parameterized or updated later
             }
