@@ -3,7 +3,6 @@ from datetime import datetime
 from supabase import create_client, Client
 import os
 from dotenv import load_dotenv
-
 from model.PnL import PnL
 from model.entities import Entity
 
@@ -33,6 +32,13 @@ class EntityService:
     @staticmethod
     def get_entities_by_sector(sector):
         response = supabase.table('entities').select('*').eq('sector', sector).execute()
+        if response.data:
+            return response.data
+        return None
+
+    @staticmethod
+    def get_entities_by_type(entity_type):
+        response = supabase.table('entities').select('*').eq('type', entity_type).execute()
         if response.data:
             return response.data
         return None

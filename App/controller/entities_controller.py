@@ -25,6 +25,15 @@ def get_entities_by_sector(sector):
     else:
         return jsonify({'error': 'No entities found for the specified sector'}), 404
 
+@entities_bp.route('/entities/type/<string:entity_type>', methods=['GET'])
+def get_entities_by_type(entity_type):
+    entities = EntityService.get_entities_by_type(entity_type)
+    if entities:
+        return jsonify(entities), 200
+    else:
+        return jsonify({'error': 'No entities found for the specified type'}), 404
+
+
 
 @entities_bp.route('/entities/buy', methods=['POST'])
 def buy_entity():
