@@ -39,7 +39,7 @@ const NewsCards: React.FC = () => {
     <>
       <Nav />
       <div className="container mx-auto p-4">
-        <h1 className="text-3xl font-bold mb-6">Latest News</h1>
+        <br></br>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {newsData.slice(0, 9).map((news, index) => (
             <Card key={index} className="flex flex-col h-full">
