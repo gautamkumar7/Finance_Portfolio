@@ -1,10 +1,29 @@
 from flask import Blueprint, jsonify
 from services.portfolio_service import PortfolioService
+from flasgger import swag_from
 
 portfolio_bp = Blueprint('portfolio', __name__)
 
-
-@portfolio_bp.route('/networth', methods=['GET'])  #tested
+@portfolio_bp.route('/networth', methods=['GET'])
+@swag_from({
+    'responses': {
+        200: {
+            'description': 'Get the net worth of the latest portfolio',
+            'examples': {
+                'application/json': {
+                    'date': '2024-08-09',
+                    'networth': 1000000.00
+                }
+            }
+        },
+        404: {
+            'description': 'No portfolio data found',
+            'examples': {
+                'application/json': {'error': 'No portfolio data found'}
+            }
+        }
+    }
+})
 def get_networth():
     portfolio = PortfolioService.get_latest_portfolio()
     if portfolio:
@@ -15,67 +34,62 @@ def get_networth():
     else:
         return jsonify({'error': 'No portfolio data found'}), 404
 
-
 @portfolio_bp.route('/stocks/current', methods=['GET'])
-def get_stocks_current():
+@swag_from({
+    'responses': {
+        200: {
+            'description': 'Get the current value of stocks in the latest portfolio',
+            'examples': {
+                'application/json': {
+                    'date': '2024-08-09',
+                    'stocks_current': 500000.00
+                }
+            }
+        },
+        404: {
+            'description': 'No portfolio data found',
+            'examples': {
+                'application/json': {'error': 'No portfolio data found'}
+            }
+        }
+    }
+})
+def get_stocks_current_value():
     portfolio = PortfolioService.get_latest_portfolio()
     if portfolio:
         return jsonify({
             'date': portfolio.date,
-            'stocks_current': round(portfolio.stocks_current, 2)
+            'stocks_current': round(portfolio.stocks_current_value, 2)
         }), 200
     else:
         return jsonify({'error': 'No portfolio data found'}), 404
 
-
-@portfolio_bp.route('/stocks/invested', methods=['GET'])
-def get_stocks_invested():
+@portfolio_bp.route('/stocks/average', methods=['GET'])
+@swag_from({
+    'responses': {
+        200: {
+            'description': 'Get the average buying price of stocks in the latest portfolio',
+            'examples': {
+                'application/json': {
+                    'date': '2024-08-09',
+                    'stocks_avg_buy': 150.00
+                }
+            }
+        },
+        404: {
+            'description': 'No portfolio data found',
+            'examples': {
+                'application/json': {'error': 'No portfolio data found'}
+            }
+        }
+    }
+})
+def get_stocks_average_buy():
     portfolio = PortfolioService.get_latest_portfolio()
     if portfolio:
         return jsonify({
             'date': portfolio.date,
-            'stocks_invested': round(portfolio.stocks_invested, 2)
+            'stocks_avg_buy': round(portfolio.stocks_avg_buy, 2)
         }), 200
-    else:
-        return jsonify({'error': 'No portfolio data found'}), 404
-
-
-@portfolio_bp.route('/bonds/current', methods=['GET'])
-def get_bonds_current():
-    portfolio = PortfolioService.get_latest_portfolio()
-    if portfolio:
-        return jsonify({
-            'date': portfolio.date,
-            'bonds_current': round(portfolio.bonds_current, 2)
-        }), 200
-    else:
-        return jsonify({'error': 'No portfolio data found'}), 404
-
-
-@portfolio_bp.route('/bonds/invested', methods=['GET'])
-def get_bonds_invested():
-    portfolio = PortfolioService.get_latest_portfolio()
-    if portfolio:
-        return jsonify({
-            'date': portfolio.date,
-            'bonds_invested': round(portfolio.bonds_invested, 2)
-        }), 200
-    else:
-        return jsonify({'error': 'No portfolio data found'}), 404
-
-
-@portfolio_bp.route('/portfolio', methods=['GET'])
-def get_all_portfolios():
-    portfolios = PortfolioService.get_all_portfolios()
-    if portfolios:
-        return jsonify([{
-            'date': portfolio.date,
-            'cash': round(portfolio.cash, 2),
-            'stocks_invested': round(portfolio.stocks_invested, 2),
-            'stocks_current': round(portfolio.stocks_current, 2),
-            'bonds_invested': round(portfolio.bonds_invested, 2),
-            'bonds_current': round(portfolio.bonds_current, 2),
-            'net_worth': round(portfolio.net_worth, 2)
-        } for portfolio in portfolios]), 200
     else:
         return jsonify({'error': 'No portfolio data found'}), 404

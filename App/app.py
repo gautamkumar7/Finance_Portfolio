@@ -8,7 +8,6 @@ from controller.entities_controller import entities_bp
 
 app = Flask(__name__)
 swagger = Swagger(app)  # Swagger setup
-# Initialize CORS
 CORS(app)
 
 # Register blueprints

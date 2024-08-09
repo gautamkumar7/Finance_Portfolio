@@ -1,55 +1,107 @@
 from flask import Blueprint, jsonify, request
 from services.wishlist_service import WishlistService
+from flasgger import swag_from
 
 wishlist_bp = Blueprint('wishlist', __name__)
 
 @wishlist_bp.route('/wishlist', methods=['GET'])
+@swag_from({
+    'responses': {
+        200: {
+            'description': 'Get all items in the wishlist',
+            'examples': {
+                'application/json': [
+                    {
+                        'wishlist_id': 1,
+                        'item': 'Tesla',
+                        'target_price': 500.00
+                    }
+                ]
+            }
+        }
+    }
+})
 def get_wishlist():
-    number = request.args.get('number', type=int)
-    if number is None:
-        return jsonify({'error': 'Number parameter is required'}), 400
-
-    wishlist_items = WishlistService.get_wishlist(number)
-    return jsonify([{
-        'number': item.number,
-        'stock_name': item.stock_name,
-        'current_price': item.current_price
-    } for item in wishlist_items]), 200
-
-
-@wishlist_bp.route('/wishlist/all', methods=['GET'])
-def get_all_wishlists():
-    wishlist_items = WishlistService.get_all_wishlists()
-    return jsonify([{
-        'number': item.number,
-        'stock_name': item.stock_name,
-        'current_price': item.current_price
-    } for item in wishlist_items]), 200
+    wishlist_items = WishlistService.get_all_wishlist_items()
+    return jsonify([item.__dict__ for item in wishlist_items]), 200
 
 @wishlist_bp.route('/wishlist', methods=['POST'])
+@swag_from({
+    'parameters': [
+        {
+            'name': 'body',
+            'in': 'body',
+            'required': True,
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'item': {'type': 'string'},
+                    'target_price': {'type': 'number'}
+                },
+                'required': ['item', 'target_price']
+            },
+            'description': 'Data for adding an item to the wishlist'
+        }
+    ],
+    'responses': {
+        201: {
+            'description': 'Item added to wishlist successfully',
+            'examples': {
+                'application/json': {
+                    'wishlist_id': 1,
+                    'item': 'Tesla',
+                    'target_price': 500.00
+                }
+            }
+        },
+        400: {
+            'description': 'Invalid data provided',
+            'examples': {
+                'application/json': {'error': 'Item and target price are required'}
+            }
+        }
+    }
+})
 def add_to_wishlist():
     data = request.get_json()
-    number = data.get('number')
-    stock_name = data.get('stock_name')
-    current_price = data.get('current_price')
+    item = data.get('item')
+    target_price = data.get('target_price')
 
-    if number not in [1, 2] or not stock_name or current_price is None:
-        return jsonify({'error': 'Invalid input data'}), 400
+    if not item or not target_price:
+        return jsonify({'error': 'Item and target price are required'}), 400
 
-    success = WishlistService.add_to_wishlist(number, stock_name, current_price)
+    wishlist_item = WishlistService.add_item_to_wishlist(item, target_price)
+    return jsonify(wishlist_item.__dict__), 201
+
+@wishlist_bp.route('/wishlist/<int:wishlist_id>', methods=['DELETE'])
+@swag_from({
+    'parameters': [
+        {
+            'name': 'wishlist_id',
+            'in': 'path',
+            'type': 'integer',
+            'required': True,
+            'description': 'ID of the wishlist item to delete'
+        }
+    ],
+    'responses': {
+        200: {
+            'description': 'Item removed from wishlist successfully',
+            'examples': {
+                'application/json': {'message': 'Wishlist item deleted successfully'}
+            }
+        },
+        404: {
+            'description': 'Wishlist item not found',
+            'examples': {
+                'application/json': {'error': 'Wishlist item not found'}
+            }
+        }
+    }
+})
+def remove_from_wishlist(wishlist_id):
+    success = WishlistService.remove_item_from_wishlist(wishlist_id)
     if success:
-        return jsonify({'message': 'Item added to wishlist successfully'}), 201
+        return jsonify({'message': 'Wishlist item deleted successfully'}), 200
     else:
-        return jsonify({'error': 'Failed to add item to wishlist'}), 500
-
-
-@wishlist_bp.route('/wishlist', methods=['DELETE'])
-def delete_from_wishlist():
-    data = request.get_json()
-    number = data.get('number')
-
-    success = WishlistService.delete_from_wishlist(number)
-    if success:
-        return jsonify({'message': f'Item with stock_number {number} removed from wishlist successfully'}), 200
-    else:
-        return jsonify({'error': 'Failed to remove item from wishlist'}), 500
+        return jsonify({'error': 'Wishlist item not found'}), 404
