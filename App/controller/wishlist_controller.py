@@ -31,3 +31,19 @@ def add_to_wishlist():
         return jsonify({'message': 'Item added to wishlist successfully'}), 201
     else:
         return jsonify({'error': 'Failed to add item to wishlist'}), 500
+
+
+@wishlist_bp.route('/wishlist', methods=['DELETE'])
+def delete_from_wishlist():
+    data = request.get_json()
+    number = data.get('number')
+    stock_name = data.get('stock_name')
+
+    if number not in [1, 2] or not stock_name:
+        return jsonify({'error': 'Invalid input data'}), 400
+
+    success = WishlistService.delete_from_wishlist(number, stock_name)
+    if success:
+        return jsonify({'message': f'Item with stock_name "{stock_name}" removed from wishlist {number} successfully'}), 200
+    else:
+        return jsonify({'error': 'Failed to remove item from wishlist'}), 500
