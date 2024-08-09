@@ -1,6 +1,8 @@
 from flask import Flask
 from flasgger import Swagger
 from flask_cors import CORS
+
+from controller.news_controller import news_bp
 from controller.portfolio_controller import portfolio_bp
 from controller.wishlist_controller import wishlist_bp
 from controller.transaction_controller import transaction_bp
@@ -16,6 +18,7 @@ app.register_blueprint(portfolio_bp, url_prefix='/api')
 app.register_blueprint(wishlist_bp, url_prefix='/api')
 app.register_blueprint(transaction_bp, url_prefix='/api')
 app.register_blueprint(entities_bp, url_prefix='/api')
+app.register_blueprint(news_bp)
 
 if __name__ == '__main__':
     app.run(debug=True)
