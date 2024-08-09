@@ -110,28 +110,23 @@ class EntityService:
 
     @staticmethod
     def update_realised_pl(realised_pl):
-        # Fetch the last row in the P&L table ordered by date (stored as a string)
+        # Fetch the last row in the P&L table ordered by date
         response = supabase.table('pnl').select('*').order('date', desc=True).limit(1).execute()
 
         if response.data:
             last_row = response.data[0]
-            last_row_id = last_row['id']
+            last_realised_pl = last_row['realised_pl']
 
-            # Update realised_pl in the latest row
-            new_realised_pl = last_row['realised_pl'] + realised_pl
-            supabase.table('pnl').update({'realised_pl': new_realised_pl}).eq('id', last_row_id).execute()
+            # Calculate new realised pl
+            new_realised_pl = last_realised_pl + realised_pl
+
+            # Capture current date and time
+            current_datetime = datetime.utcnow()
+
+            # Insert new row with updated realised pl and date
+            supabase.table('pnl').insert({'realised_pl': new_realised_pl, 'date': current_datetime}).execute()
         else:
             # Handle case where there's no row in the table yet (optional)
             pass
 
-    @staticmethod
-    def insert_daily_pl_row():
-        # Insert a new row into the P&L table daily with default values
-        today = datetime.now().date().isoformat()  # Convert date to string
-        new_row = PnL(
-            id=None,  # Assuming auto-increment ID
-            date=today,  # Date as a string
-            realised_pl=0.0,
-            unrealised_pl=0.0
-        )
-        supabase.table('pnl').insert(new_row.__dict__).execute()
+
