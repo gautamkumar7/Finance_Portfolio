@@ -1,35 +1,100 @@
-import React from 'react';
+"use client"
+
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  XAxis,
+  YAxis
 } from 'recharts';
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 
-const data = [
-  { date: '2024-01-01', netWorth: 10000 },
-  { date: '2024-02-01', netWorth: 12000 },
-  { date: '2024-03-01', netWorth: 15000 },
-  { date: '2024-04-01', netWorth: 18000 },
-  { date: '2024-05-01', netWorth: 20000 },
-  { date: '2024-06-01', netWorth: 25000 },
-];
+// Config for the lines representing Invested Amount and Portfolio Value
+const chartConfig = {
+  invested: {
+    label: "Invested Amount",
+    color: "hsl(var(--chart-1))",
+  },
+  currentValue: {
+    label: "Portfolio Value",
+    color: "hsl(var(--chart-2))",
+  },
+} satisfies ChartConfig;
 
-function NetWorthGraph() {
+export function NetWorthGraph() {
+  const [data, setData] = useState<any[]>([]);
+
+  useEffect(() => {
+    // Fetch data from the API
+    axios.get('http://127.0.0.1:5000/api/portfolio')
+      .then(response => {
+        const fetchedData = response.data.map((item: {
+          date: string;
+          bonds_current: number;
+          bonds_invested: number;
+          cash: number;
+          stocks_current: number;
+          stocks_invested: number;
+        }) => ({
+          date: item.date,
+          InvestedAmount: item.stocks_invested + item.bonds_invested,
+          PortfolioValue: item.stocks_current + item.bonds_current,
+        }));
+
+        // Reverse the data for X-Axis
+        const reversedData = [...fetchedData].reverse();
+        setData(reversedData);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+  }, []); // Empty dependency array to run once on mount
+
   return (
     <ResponsiveContainer width="100%" height={400}>
-      <LineChart
-        data={data}
-        margin={{
-          top: 20, right: 30, left: 30, bottom: 20,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Line type="monotone" dataKey="netWorth" stroke="#8884d8" activeDot={{ r: 8 }} />
-      </LineChart>
+      <ChartContainer config={chartConfig}>
+        <LineChart
+          accessibilityLayer
+          data={data}
+          margin={{
+            left: 12,
+            right: 12,
+          }}
+        >
+          <CartesianGrid vertical={false} />
+          <XAxis
+            dataKey="date"
+            tickLine={false}
+            axisLine={false}
+            tickMargin={8}
+            tickFormatter={(value) => value.slice(0, 7)} // Adjust as needed
+          />
+          <YAxis />
+          <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+          <Line
+            dataKey="InvestedAmount"
+            type="monotone"
+            stroke="var(--color-invested)"
+            strokeWidth={2}
+            dot={false}
+          />
+          <Line
+            dataKey="PortfolioValue"
+            type="monotone"
+            stroke="var(--color-currentValue)"
+            strokeWidth={2}
+            dot={false}
+          />
+        </LineChart>
+      </ChartContainer>
     </ResponsiveContainer>
   );
 }
-
-export default NetWorthGraph;
