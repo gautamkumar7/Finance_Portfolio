@@ -1,0 +1,10 @@
+# pip install -r requirements.txt
+# to get all dependencies
+pandas
+yfinance
+mysql-connector-python
+flask
+supabase
+python-dotenv
+flasgger
+httpx[http2]
