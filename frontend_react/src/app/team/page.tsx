@@ -1,7 +1,9 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLinkedin, faGithub } from '@fortawesome/free-brands-svg-icons';
+import { ArrowUpRight } from 'lucide-react';
 
 const teamMembers = [
   {
@@ -35,11 +37,19 @@ const OurTeam = () => {
     <section className="w-full py-16 md:py-28 lg:py-36 bg-muted">
       <div className="container grid items-center justify-center gap-8 px-4 text-center md:px-6 lg:gap-12">
         <div className="space-y-4">
-          <h2 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
-            Meet Our Team
-          </h2>
+          <div className="flex items-center justify-center gap-4 flex-wrap">
+            <h2 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
+              Meet Our Team
+            </h2>
+            <Button asChild className="text-xl font-semibold sm:text-2xl md:text-3xl h-auto py-2 px-4">
+              <Link href="/portfolio" className="flex items-center gap-2">
+                App
+                <ArrowUpRight className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
+              </Link>
+            </Button>
+          </div>
           <p className="mx-auto max-w-[800px] text-xl text-muted-foreground md:text-2xl/relaxed lg:text-xl/relaxed xl:text-2xl/relaxed">
-            Get to know about our team more, feel free to reach out to us.
+            Get to know more about our team, feel free to reach out to us :)
           </p>
         </div>
         <div className="grid w-full grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
