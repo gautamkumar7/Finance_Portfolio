@@ -62,3 +62,20 @@ def get_bonds_invested():
         }), 200
     else:
         return jsonify({'error': 'No portfolio data found'}), 404
+
+
+@portfolio_bp.route('/portfolio', methods=['GET'])
+def get_all_portfolios():
+    portfolios = PortfolioService.get_all_portfolios()
+    if portfolios:
+        return jsonify([{
+            'date': portfolio.date,
+            'cash': round(portfolio.cash, 2),
+            'stocks_invested': round(portfolio.stocks_invested, 2),
+            'stocks_current': round(portfolio.stocks_current, 2),
+            'bonds_invested': round(portfolio.bonds_invested, 2),
+            'bonds_current': round(portfolio.bonds_current, 2),
+            'net_worth': round(portfolio.net_worth, 2)
+        } for portfolio in portfolios]), 200
+    else:
+        return jsonify({'error': 'No portfolio data found'}), 404

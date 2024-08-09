@@ -108,8 +108,13 @@ class EntityService:
         else:
             return False, 'Entity not found.'
 
-    @staticmethod
     def update_realised_pl(realised_pl):
+        # Capture current date
+        current_date = datetime.now().date()  # Use date() for date only
+
+        # Convert date to string (adjust format as needed)
+        date_string = current_date.strftime("%Y-%m-%d")
+
         # Fetch the last row in the P&L table ordered by date
         response = supabase.table('pnl').select('*').order('date', desc=True).limit(1).execute()
 
@@ -120,13 +125,12 @@ class EntityService:
             # Calculate new realised pl
             new_realised_pl = last_realised_pl + realised_pl
 
-            # Capture current date and time
-            current_datetime = datetime.utcnow()
-
-            # Insert new row with updated realised pl and date
-            supabase.table('pnl').insert({'realised_pl': new_realised_pl, 'date': current_datetime}).execute()
+            # Insert new row with updated realised pl and date as a string
+            supabase.table('pnl').insert({'realised_pl': new_realised_pl, 'date': date_string}).execute()
         else:
             # Handle case where there's no row in the table yet (optional)
-            pass
+            # For example, insert the first row with the initial realised_pl
+            supabase.table('pnl').insert({'realised_pl': realised_pl, 'date': date_string}).execute()
+
 
 
