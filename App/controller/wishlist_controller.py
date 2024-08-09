@@ -16,6 +16,16 @@ def get_wishlist():
         'current_price': item.current_price
     } for item in wishlist_items]), 200
 
+
+@wishlist_bp.route('/wishlist/all', methods=['GET'])
+def get_all_wishlists():
+    wishlist_items = WishlistService.get_all_wishlists()
+    return jsonify([{
+        'number': item.number,
+        'stock_name': item.stock_name,
+        'current_price': item.current_price
+    } for item in wishlist_items]), 200
+
 @wishlist_bp.route('/wishlist', methods=['POST'])
 def add_to_wishlist():
     data = request.get_json()
@@ -37,13 +47,9 @@ def add_to_wishlist():
 def delete_from_wishlist():
     data = request.get_json()
     number = data.get('number')
-    stock_name = data.get('stock_name')
 
-    if number not in [1, 2] or not stock_name:
-        return jsonify({'error': 'Invalid input data'}), 400
-
-    success = WishlistService.delete_from_wishlist(number, stock_name)
+    success = WishlistService.delete_from_wishlist(number)
     if success:
-        return jsonify({'message': f'Item with stock_name "{stock_name}" removed from wishlist {number} successfully'}), 200
+        return jsonify({'message': f'Item with stock_number {number} removed from wishlist successfully'}), 200
     else:
         return jsonify({'error': 'Failed to remove item from wishlist'}), 500
