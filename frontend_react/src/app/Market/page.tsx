@@ -1,36 +1,11 @@
-import Link from "next/link";
-import {
-  Activity,
-  ArrowUpRight,
-  CircleUser,
-  CreditCard,
-  DollarSign,
-  Menu,
-  Package2,
-  Search,
-  Users,
-} from "lucide-react";
-
+"use client";
+import { MoveUpRight } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   Table,
   TableBody,
@@ -40,26 +15,47 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Nav from "@/components/Nav";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+type Market = {
+  market_name: string;
+  percentage_change: number;
+};
+
+type Wishlist = {
+  current_price: number;
+  number: number;
+  stock_name: string;
+  percentage?: number;
+};
 
 const Dashboard = () => {
-  const markets = [
-    {
-      market_name: "S&P 500",
-      percentage_change: 1.25,
-    },
-    {
-      market_name: "NASDAQ",
-      percentage_change: -0.75,
-    },
-    {
-      market_name: "Dow Jones",
-      percentage_change: 0.5,
-    },
-    {
-      market_name: "FTSE 100",
-      percentage_change: 0.8,
-    },
-  ];
+  const [wishlist, setWishlist] = useState<Wishlist[] | []>([]);
+  const [markets, setMarket] = useState<Market[] | []>([]);
+
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      const res = await axios<Wishlist[]>(
+        "http://127.0.0.1:5000/api/wishlist/all"
+      );
+      const data = await res.data;
+      setWishlist(data);
+    };
+
+    fetchWishlist();
+  }, []);
+
+  useEffect(() => {
+    const fetchMarket = async () => {
+      const res = await axios<Market[]>("http://127.0.0.1:5000/api/markets");
+      const data = await res.data;
+      setMarket(data);
+    };
+
+    fetchMarket();
+  }, []);
+
   return (
     <>
       <Nav />
@@ -80,7 +76,7 @@ const Dashboard = () => {
                     <CardTitle className="text-xl font-medium">
                       {market.market_name}
                     </CardTitle>
-                    <DollarSign className="h-4 w-4 text-muted-foreground" />
+                    <MoveUpRight color="gray" size={20} />
                   </CardHeader>
                   <CardContent>
                     <div
@@ -100,18 +96,11 @@ const Dashboard = () => {
           <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
             <Card className="xl:col-span-2" x-chunk="dashboard-01-chunk-4">
               <CardHeader className="flex flex-row items-center">
-                <div className="grid gap-2">
-                  <CardTitle>Transactions</CardTitle>
-                  <CardDescription>
-                    Recent transactions from your store.
-                  </CardDescription>
+                <div className="flex flex-col w-full space-y-2">
+                  <CardTitle className="text-lg">Wish List</CardTitle>
+                  <Input placeholder="Search stocks, makets" />
                 </div>
-                <Button asChild size="sm" className="ml-auto gap-1">
-                  <Link href="#">
-                    View All
-                    <ArrowUpRight className="h-4 w-4" />
-                  </Link>
-                </Button>
+                <Button asChild size="sm" className="ml-auto gap-1"></Button>
               </CardHeader>
               <CardContent>
                 <Table>
