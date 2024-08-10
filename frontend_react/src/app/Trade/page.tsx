@@ -116,7 +116,7 @@ const Page = () => {
                       className="col-span-3"
                     />
                   </div>
-                  <div className="grid items-center grid-cols-4 gap-4">
+                  <div className="grid items-center grid-cols-4 gap-4 mt-10">
                     <Label htmlFor="total" className="text-right font-medium">
                       Total
                     </Label>
