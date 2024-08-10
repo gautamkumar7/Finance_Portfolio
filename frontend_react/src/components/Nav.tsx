@@ -49,6 +49,11 @@ const Nav = () => {
                                 <a>Analytics</a>
                             </Link>
                         </li>
+                        <li>
+                            <Link href= "/Trade" legacyBehavior passHref>
+                                <a>Trade</a>
+                            </Link>
+                        </li>
                     </ul>
                 </div>
             </div>
