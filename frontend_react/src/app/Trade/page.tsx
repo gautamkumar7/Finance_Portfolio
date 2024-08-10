@@ -193,7 +193,7 @@ const Page = () => {
               </DialogContent>
             </Dialog>
           </div>
-          <div className=" shadow rounded-lg p-4 w-3/4 border p-2 border-gray-400 rounded">
+          <div className=" shadow rounded-lg w-3/4 border p-2 border-gray-400">
             <h1 className="text-2xl font-bold">Transactions</h1>
             <Table className="">
               <TableHeader>
@@ -202,7 +202,7 @@ const Page = () => {
                   <TableHead>Name</TableHead>
                   <TableHead>Invested Amount</TableHead>
                   <TableHead>Action</TableHead>
-                  <TableHead>Action</TableHead>
+                  <TableHead>Type</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
