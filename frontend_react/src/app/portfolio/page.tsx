@@ -278,6 +278,7 @@ const Page = () => {
                                   id="stock"
                                   placeholder="Enter stock name"
                                   className="col-span-3"
+                                  value={investment.name}
                                 />
                               </div>
                               <div className="grid items-center grid-cols-4 gap-4">
@@ -316,7 +317,7 @@ const Page = () => {
                                   id="total"
                                   className="col-span-3 font-medium"
                                 >
-                                  $0.00
+                                  $0.0
                                 </div>
                               </div>
                             </div>
