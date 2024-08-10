@@ -23,7 +23,7 @@ const Nav = () => {
             />
           </div>
           <ThemeToggleButton />
-          <span className="text-white text-lg">User</span>
+          {/* <span className="text-white text-lg">User</span> */}
         </div>
       </div>
       <div className="absolute left-1/2 transform -translate-x-1/2 border-gray-800 rounded-lg border-2  w-3/5 -bottom-6">
