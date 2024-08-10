@@ -60,7 +60,7 @@ const Nav = () => {
             <Link className="btn" href="/Analytics">
               Analytics
             </Link>
-            <Link className="btn" href="/Transactions">
+            <Link className="btn" href="/Trade">
               Trades
             </Link>
           </ul>
