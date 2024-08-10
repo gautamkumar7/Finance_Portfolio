@@ -137,7 +137,7 @@ const Page = () => {
             </Dialog>
             <Dialog>
               <DialogTrigger className="mt-4 w-1/5 text-xl h-10 hover:scale-110 transition-all duration-300 rounded-full  bg-red-700">
-                Buy
+                Sell
               </DialogTrigger>
               <DialogContent className="sm:max-w-[500px]">
                 <div className="grid gap-4 py-4">
