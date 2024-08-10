@@ -1,10 +1,8 @@
 "use client";
+import React, { useEffect, useState } from "react";
 import { MoveUpRight } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -15,7 +13,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Nav from "@/components/Nav";
-import { useEffect, useState } from "react";
 import axios from "axios";
 
 type Market = {
@@ -26,35 +23,85 @@ type Market = {
 type Wishlist = {
   current_price: number;
   number: number;
+  previous_price: number;
   stock_name: string;
-  percentage?: number;
 };
 
+type Drop = {
+  name: string;
+  current_price: number;
+};
+
+const drop: Drop[] = [
+  { name: "Apple", current_price: 120 },
+  { name: "Tesla", current_price: 500 },
+  { name: "Microsoft", current_price: 200 },
+  { name: "Google", current_price: 300 },
+  { name: "Amazon", current_price: 150 },
+  { name: "Facebook", current_price: 100 },
+  { name: "Twitter", current_price: 50 },
+  { name: "Netflix", current_price: 70 },
+  { name: "Uber", current_price: 30 },
+  { name: "Lyft", current_price: 20 },
+];
+
+const gl = [
+  { name: "Apple", percentage: 0.5 },
+  { name: "Tesla", percentage: -0.7 },
+  { name: "Microsoft", percentage: 0.3 },
+  { name: "Google", percentage: -0.2 },
+  { name: "Amazon", percentage: 0.1 },
+  { name: "Facebook", percentage: 0.6 },
+  { name: "Twitter", percentage: -0.5 },
+  { name: "Netflix", percentage: 0.4 },
+  { name: "Uber", percentage: -0.3 },
+  { name: "Lyft", percentage: 0.2 },
+];
+
 const Dashboard = () => {
-  const [wishlist, setWishlist] = useState<Wishlist[] | []>([]);
-  const [markets, setMarket] = useState<Market[] | []>([]);
+  const [search, setSearch] = useState("");
+  const [dropdown, setDropdown] = useState(false);
+  const [wishlist, setWishlist] = useState<Wishlist[]>([]);
+  const [markets, setMarkets] = useState<Market[]>([]);
 
   useEffect(() => {
-    const fetchWishlist = async () => {
-      const res = await axios<Wishlist[]>(
+    const fetchWishList = async () => {
+      const res = await axios.get<Wishlist[]>(
         "http://127.0.0.1:5000/api/wishlist/all"
       );
-      const data = await res.data;
-      setWishlist(data);
+      setWishlist(res.data);
     };
-
-    fetchWishlist();
+    fetchWishList();
   }, []);
 
   useEffect(() => {
     const fetchMarket = async () => {
-      const res = await axios<Market[]>("http://127.0.0.1:5000/api/markets");
-      const data = await res.data;
-      setMarket(data);
+      const res = await axios.get<Market[]>(
+        "http://127.0.0.1:5000/api/markets"
+      );
+      setMarkets(res.data);
     };
-
     fetchMarket();
   }, []);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    setDropdown(true);
+  };
+
+  const handleDropdownItemClick = (name: string) => {
+    setSearch(name);
+    setDropdown(false);
+  };
+
+  const handleInputBlur = () => {
+    // Delay hiding the dropdown to allow for click events to be processed
+    setTimeout(() => setDropdown(false), 200);
+  };
+
+  const filteredDrop = drop.filter((d) =>
+    d.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <>
@@ -62,250 +109,208 @@ const Dashboard = () => {
       <div className="flex min-h-screen w-full flex-col mt-4">
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
           <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-            {markets?.map((market, index) => (
-              <div key={index}>
-                <Card
-                  className={`border-2 ${
-                    market.percentage_change > 0
-                      ? "border-green-600"
-                      : "border-red-600"
-                  }`}
-                  x-chunk="dashboard-01-chunk-0"
-                >
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-xl font-medium">
-                      {market.market_name}
-                    </CardTitle>
-                    <MoveUpRight color="gray" size={20} />
-                  </CardHeader>
-                  <CardContent>
-                    <div
-                      className={`text-xl font-bold ${
-                        market.percentage_change > 0
-                          ? "text-green-500"
-                          : "text-red-500"
-                      }`}
-                    >
-                      {market.percentage_change}%
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+            {markets.map((market, index) => (
+              <Card
+                key={index}
+                className={`border-2 ${
+                  market.percentage_change > 0
+                    ? "border-green-600"
+                    : "border-red-600"
+                }`}
+              >
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-xl font-medium">
+                    {market.market_name}
+                  </CardTitle>
+                  <MoveUpRight color="gray" size={20} />
+                </CardHeader>
+                <CardContent>
+                  <div
+                    className={`text-xl font-bold ${
+                      market.percentage_change > 0
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }`}
+                  >
+                    {market.percentage_change}%
+                  </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
           <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
-            <Card className="xl:col-span-2" x-chunk="dashboard-01-chunk-4">
-              <CardHeader className="flex flex-row items-center">
-                <div className="flex flex-col w-full space-y-2">
-                  <CardTitle className="text-lg">Wish List</CardTitle>
-                  <Input placeholder="Search stocks, makets" />
+            <Card className="xl:col-span-2">
+              <CardHeader className="flex flex-col space-y-2">
+                <CardTitle className="text-lg">Wish List</CardTitle>
+                <div className="relative">
+                  <Input
+                    value={search}
+                    onChange={handleSearch}
+                    placeholder="Search stocks"
+                    onBlur={handleInputBlur}
+                  />
+                  {dropdown && filteredDrop.length > 0 && search.length > 0 && (
+                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
+                      {filteredDrop.map((stock, index) => (
+                        <div
+                          key={index}
+                          className="p-2 hover:bg-gray-100 cursor-pointer flex justify-between space-x-6 items-center"
+                          onClick={() => handleDropdownItemClick(stock.name)}
+                        >
+                          <p className="font-medium">{stock.name}</p>
+                          <p className="text-sm text-gray-600">
+                            ${stock.current_price}
+                          </p>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="mr-2 bg-blue-300 hover:bg-blue-500"
+                          >
+                            Add to wishlist
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <Button asChild size="sm" className="ml-auto gap-1"></Button>
               </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Customer</TableHead>
-                      <TableHead className="hidden xl:table-column">
-                        Type
-                      </TableHead>
-                      <TableHead className="hidden xl:table-column">
-                        Status
-                      </TableHead>
-                      <TableHead className="hidden xl:table-column">
-                        Date
-                      </TableHead>
-                      <TableHead className="text-right">Amount</TableHead>
+                      <TableHead>Stock</TableHead>
+                      <TableHead>Current Price</TableHead>
+                      <TableHead>Percentage Change</TableHead>
+                      <TableHead>Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    <TableRow>
-                      <TableCell>
-                        <div className="font-medium">Liam Johnson</div>
-                        <div className="hidden text-sm text-muted-foreground md:inline">
-                          liam@example.com
-                        </div>
-                      </TableCell>
-                      <TableCell className="hidden xl:table-column">
-                        Sale
-                      </TableCell>
-                      <TableCell className="hidden xl:table-column">
-                        <Badge className="text-xs" variant="outline">
-                          Approved
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                        2023-06-23
-                      </TableCell>
-                      <TableCell className="text-right">$250.00</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>
-                        <div className="font-medium">Olivia Smith</div>
-                        <div className="hidden text-sm text-muted-foreground md:inline">
-                          olivia@example.com
-                        </div>
-                      </TableCell>
-                      <TableCell className="hidden xl:table-column">
-                        Refund
-                      </TableCell>
-                      <TableCell className="hidden xl:table-column">
-                        <Badge className="text-xs" variant="outline">
-                          Declined
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                        2023-06-24
-                      </TableCell>
-                      <TableCell className="text-right">$150.00</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>
-                        <div className="font-medium">Noah Williams</div>
-                        <div className="hidden text-sm text-muted-foreground md:inline">
-                          noah@example.com
-                        </div>
-                      </TableCell>
-                      <TableCell className="hidden xl:table-column">
-                        Subscription
-                      </TableCell>
-                      <TableCell className="hidden xl:table-column">
-                        <Badge className="text-xs" variant="outline">
-                          Approved
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                        2023-06-25
-                      </TableCell>
-                      <TableCell className="text-right">$350.00</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>
-                        <div className="font-medium">Emma Brown</div>
-                        <div className="hidden text-sm text-muted-foreground md:inline">
-                          emma@example.com
-                        </div>
-                      </TableCell>
-                      <TableCell className="hidden xl:table-column">
-                        Sale
-                      </TableCell>
-                      <TableCell className="hidden xl:table-column">
-                        <Badge className="text-xs" variant="outline">
-                          Approved
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                        2023-06-26
-                      </TableCell>
-                      <TableCell className="text-right">$450.00</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>
-                        <div className="font-medium">Liam Johnson</div>
-                        <div className="hidden text-sm text-muted-foreground md:inline">
-                          liam@example.com
-                        </div>
-                      </TableCell>
-                      <TableCell className="hidden xl:table-column">
-                        Sale
-                      </TableCell>
-                      <TableCell className="hidden xl:table-column">
-                        <Badge className="text-xs" variant="outline">
-                          Approved
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                        2023-06-27
-                      </TableCell>
-                      <TableCell className="text-right">$550.00</TableCell>
-                    </TableRow>
+                    {wishlist.map((stock, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{stock.stock_name}</TableCell>
+                        <TableCell>${stock.current_price.toFixed(2)}</TableCell>
+                        <TableCell>
+                          <span
+                            className={
+                              stock.current_price - stock.previous_price > 0
+                                ? "text-green-500"
+                                : "text-red-500"
+                            }
+                          >
+                            {stock.current_price - stock.previous_price > 0
+                              ? "+"
+                              : ""}
+                            {(
+                              ((stock.current_price - stock.previous_price) /
+                                stock.previous_price) *
+                              100
+                            ).toFixed(2)}
+                            %
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="mr-2 bg-green-400 hover:text-green-700"
+                          >
+                            Buy
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="mr-2 bg-red-400 hover:text-red-700"
+                          >
+                            Sell
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="mr-2 text-red-500"
+                          >
+                            Delete
+                          </Button>
+                          <Button size="sm" variant="outline">
+                            View Details
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
                   </TableBody>
                 </Table>
               </CardContent>
             </Card>
-            <Card x-chunk="dashboard-01-chunk-5">
-              <CardHeader>
-                <CardTitle>Recent Sales</CardTitle>
-              </CardHeader>
-              <CardContent className="grid gap-8">
-                <div className="flex items-center gap-4">
-                  <Avatar className="hidden h-9 w-9 sm:flex">
-                    <AvatarImage src="/avatars/01.png" alt="Avatar" />
-                    <AvatarFallback>OM</AvatarFallback>
-                  </Avatar>
-                  <div className="grid gap-1">
-                    <p className="text-sm font-medium leading-none">
-                      Olivia Martin
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      olivia.martin@email.com
-                    </p>
-                  </div>
-                  <div className="ml-auto font-medium">+$1,999.00</div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Avatar className="hidden h-9 w-9 sm:flex">
-                    <AvatarImage src="/avatars/02.png" alt="Avatar" />
-                    <AvatarFallback>JL</AvatarFallback>
-                  </Avatar>
-                  <div className="grid gap-1">
-                    <p className="text-sm font-medium leading-none">
-                      Jackson Lee
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      jackson.lee@email.com
-                    </p>
-                  </div>
-                  <div className="ml-auto font-medium">+$39.00</div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Avatar className="hidden h-9 w-9 sm:flex">
-                    <AvatarImage src="/avatars/03.png" alt="Avatar" />
-                    <AvatarFallback>IN</AvatarFallback>
-                  </Avatar>
-                  <div className="grid gap-1">
-                    <p className="text-sm font-medium leading-none">
-                      Isabella Nguyen
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      isabella.nguyen@email.com
-                    </p>
-                  </div>
-                  <div className="ml-auto font-medium">+$299.00</div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Avatar className="hidden h-9 w-9 sm:flex">
-                    <AvatarImage src="/avatars/04.png" alt="Avatar" />
-                    <AvatarFallback>WK</AvatarFallback>
-                  </Avatar>
-                  <div className="grid gap-1">
-                    <p className="text-sm font-medium leading-none">
-                      William Kim
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      will@email.com
-                    </p>
-                  </div>
-                  <div className="ml-auto font-medium">+$99.00</div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Avatar className="hidden h-9 w-9 sm:flex">
-                    <AvatarImage src="/avatars/05.png" alt="Avatar" />
-                    <AvatarFallback>SD</AvatarFallback>
-                  </Avatar>
-                  <div className="grid gap-1">
-                    <p className="text-sm font-medium leading-none">
-                      Sofia Davis
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      sofia.davis@email.com
-                    </p>
-                  </div>
-                  <div className="ml-auto font-medium">+$39.00</div>
-                </div>
-              </CardContent>
-            </Card>
+            <div>
+              <Card className="border-green-500 bg-[#e6ffe6] border-b-0 rounded-none">
+                <CardHeader className="flex flex-col space-y-2">
+                  <CardTitle className="text-lg text-green-700">
+                    Your Gainers
+                  </CardTitle>
+                </CardHeader>
+                <CardContent></CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-center text-2xl font-semibold text-black">
+                        Stock
+                      </TableHead>
+                      <TableHead className="text-center text-2xl font-semibold text-black">
+                        Percentage Change
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {gl
+                      .filter((stock) => stock.percentage > 0)
+                      .map((stock, index) => (
+                        <TableRow className="text-center" key={index}>
+                          <TableCell className="text-center">
+                            {stock.name}
+                          </TableCell>
+                          <TableCell className="text-green-500">
+                            +{stock.percentage}%
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              </Card>
+              <Card className="border-red-500 border-t-0 bg-[#ffe8e8] rounded-no">
+                <CardHeader className="flex flex-col space-y-2">
+                  <CardTitle className="text-lg text-red-500">
+                    Your Losers
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="text-center text-2xl font-semibold text-black">
+                          Stock
+                        </TableHead>
+                        <TableHead className="text-center text-2xl font-semibold text-black">
+                          Percentage Change
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {gl
+                        .filter((stock) => stock.percentage < 0)
+                        .map((stock, index) => (
+                          <TableRow className="text-center text-xl" key={index}>
+                            <TableCell className="text-center text-xl">
+                              {stock.name}
+                            </TableCell>
+                            <TableCell className="text-red-500">
+                              {stock.percentage}%
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </main>
       </div>
