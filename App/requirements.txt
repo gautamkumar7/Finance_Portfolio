@@ -7,4 +7,5 @@ flask
 supabase
 python-dotenv
 flasgger
+flask-cors
 httpx[http2]
