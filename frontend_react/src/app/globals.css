@@ -69,5 +69,5 @@
 }
 
 .btn {
-  @apply hover:text-black hover:scale-110 transition-all duration-300;
+  @apply hover:text-black hover:scale-110 transition-all duration-300 dark:hover:text-white;
 }
