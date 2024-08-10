@@ -7,6 +7,7 @@ from controller.portfolio_controller import portfolio_bp
 from controller.wishlist_controller import wishlist_bp
 from controller.transaction_controller import transaction_bp
 from controller.entities_controller import entities_bp
+from controller.market_controller import market_bp
 
 app = Flask(__name__)
 swagger = Swagger(app)  # Swagger setup
@@ -19,6 +20,7 @@ app.register_blueprint(wishlist_bp, url_prefix='/api')
 app.register_blueprint(transaction_bp, url_prefix='/api')
 app.register_blueprint(entities_bp, url_prefix='/api')
 app.register_blueprint(news_bp, url_prefix='/api')
+app.register_blueprint(market_bp, url_prefix='/api')
 
 if __name__ == '__main__':
     app.run(debug=True)
