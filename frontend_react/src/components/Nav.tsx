@@ -10,7 +10,7 @@ const Nav = () => {
   return (
     <div className="relative">
       <div className="bg-gradient-to-r from-black to bg-gray-500 w-full h-32 flex items-center justify-around p-4">
-        <div className="text-white font-bold text-4xl">PortfolioX</div>
+        <Link href='/' className="text-white font-bold text-4xl">PortfolioX</Link>
         <div className="flex space-x-3 items-center">
           <BellDot color="white" size={24} />
           <div className="relative w-10 h-10">
