@@ -38,14 +38,19 @@ const Nav = () => {
                 <DropdownMenuItem>
                   <Link href="/team">My Teamates</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>Setting</DropdownMenuItem>
+                <DropdownMenuItem>
+                <Link href="/SettingsP">Settings</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                <Link href="#">Take a Tour</Link>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
           <ThemeToggleButton />
         </div>
       </div>
-      <div className="absolute left-1/2 transform -translate-x-1/2 border-gray-800 rounded-lg border-2  w-3/5 -bottom-6">
+      <div className="absolute left-1/2 transform -translate-x-1/2 rounded-lg border-2  w-3/5 -bottom-6">
         <div className="bg-white dark:bg-[#0C0A09] text-gray-700  dark:text-white rounded-md shadow-md px-6 py-3">
           <ul className="flex space-x-6 justify-center">
             <Link className="btn" href="/portfolio" passHref>

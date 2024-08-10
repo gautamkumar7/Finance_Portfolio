@@ -340,7 +340,7 @@ const Page = () => {
                     <TableCell>
                       ${investment.avg_buy_price.toFixed(2)}
                     </TableCell>
-                    <TableCell className="text-green-600">
+                    <TableCell className="">
                       ${investment.current_price.toFixed(2)}
                     </TableCell>
                     <TableCell
