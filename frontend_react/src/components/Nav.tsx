@@ -34,7 +34,11 @@ const Nav = () => {
                                 <a>Portfolio</a>
                             </Link>
                         </li>
-                        <li>Markets</li>
+                        <li>
+                         <Link href= "/Market" legacyBehavior passHref>
+                                <a>Markets</a>
+                            </Link>
+                        </li>
                         <li>
                         <Link href= "/News" legacyBehavior passHref>
                                 <a>News</a>
