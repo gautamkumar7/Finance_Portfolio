@@ -30,7 +30,7 @@ const NewsCards: React.FC = () => {
   // Function to fetch news data from API
   const fetchNews = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/news");
+      const response = await fetch("https://finance-portfolio.onrender.com/api/news");
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }

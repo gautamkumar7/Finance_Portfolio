@@ -67,7 +67,7 @@ const Page = () => {
   useEffect(() => {
     const fetchStocks = async () => {
       const res = await axios<Stocks>(
-        "http://127.0.0.1:5000/api/stocks/invested"
+        "https://finance-portfolio.onrender.com/api/stocks/invested"
       );
       const data = res.data;
       setStock(data);
@@ -79,7 +79,7 @@ const Page = () => {
   useEffect(() => {
     const fetchBonds = async () => {
       const res = await axios<Bonds>(
-        "http://127.0.0.1:5000/api/bonds/invested"
+        "https://finance-portfolio.onrender.com/api/bonds/invested"
       );
       const data = res.data;
       setBonds(data);
@@ -91,7 +91,7 @@ const Page = () => {
   useEffect(() => {
     const fetchBonds = async () => {
       const res = await axios<BondsCurrent>(
-        "http://127.0.0.1:5000/api/bonds/current"
+        "https://finance-portfolio.onrender.com/api/bonds/current"
       );
       const data = res.data;
       setbondsCurrent(data);
@@ -103,7 +103,7 @@ const Page = () => {
   useEffect(() => {
     const fetchBonds = async () => {
       const res = await axios<StocksCurrent>(
-        "http://127.0.0.1:5000/api/stocks/current"
+        "https://finance-portfolio.onrender.com/api/stocks/current"
       );
       const data = res.data;
       setstocksCurrent(data);
@@ -115,7 +115,7 @@ const Page = () => {
   useEffect(() => {
     const fetchEntties = async () => {
       const res = await axios<Investment[]>(
-        "http://127.0.0.1:5000/api/entities"
+        "https://finance-portfolio.onrender.com/api/entities"
       );
       const data = res.data;
       setInvestments(data);

@@ -46,7 +46,7 @@ const Page = () => {
     const fetchTransactions = async () => {
       try {
         const response = await axios.get<Transaction[]>(
-          "http://127.0.0.1:5000/api/transactions"
+          "https://finance-portfolio.onrender.com/api/transactions"
         );
         const data = response.data;
         setTransactions(data);

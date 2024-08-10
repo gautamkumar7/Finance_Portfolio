@@ -17,7 +17,7 @@ function SectorPieChart() {
   const [data, setData] = useState<SectorData[]>([]);
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:5000/api/entities')
+    axios.get('https://finance-portfolio.onrender.com/api/entities')
       .then(response => {
         const sectorData = response.data.reduce((acc: Record<string, number>, item: any) => {
           const sector = item.sector;

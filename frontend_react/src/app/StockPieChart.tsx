@@ -11,7 +11,7 @@ function StockPieChart() {
 
   useEffect(() => {
     // Fetch data from the API
-    axios.get('http://127.0.0.1:5000/api/entities')
+    axios.get('https://finance-portfolio.onrender.com/api/entities')
       .then(response => {
         const fetchedData = response.data
           .filter((item: { type: string }) => item.type == 'STOCK') // Filter only stocks
@@ -79,7 +79,7 @@ export default StockPieChart;
 
 //   useEffect(() => {
 //     // Fetch data from the API
-//     axios.get('http://127.0.0.1:5000/api/entities')
+//     axios.get('https://finance-portfolio.onrender.com/api/entities')
 //       .then(response => {
 //         const fetchedData = response.data
 //           .filter((item: { type: string }) => item.type === 'STOCK') // Filter only stocks

@@ -34,7 +34,7 @@ export function NetWorthGraph() {
 
   useEffect(() => {
     // Fetch data from the API
-    axios.get('http://127.0.0.1:5000/api/portfolio')
+    axios.get('https://finance-portfolio.onrender.com/api/portfolio')
       .then(response => {
         const fetchedData = response.data.map((item: {
           date: string;
