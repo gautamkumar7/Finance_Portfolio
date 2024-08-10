@@ -1,4 +1,5 @@
 "use client";
+import PortfolioToCSV from "@/components/excel";
 import Nav from "@/components/Nav";
 import { Button } from "@/components/ui/button";
 import {
@@ -177,13 +178,7 @@ const Page = () => {
           <div className=" shadow rounded-lg p-4 w-3/4">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold text-gray-700">Holdings</h2>
-              <Button
-                variant="outline"
-                className="text-slate-600 border-slate-900"
-              >
-                <DownloadIcon className="mr-2 h-4 w-4 text-slate-800" />
-                Download Statement
-              </Button>
+              <PortfolioToCSV data={investments} />
             </div>
             <Table>
               <TableHeader>
