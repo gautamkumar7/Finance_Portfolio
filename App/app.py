@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 from flasgger import Swagger
 from flask_cors import CORS
@@ -26,4 +28,5 @@ app.register_blueprint(market_bp, url_prefix='/api')
 app.register_blueprint(gains_losses_bp, url_prefix='/api')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 4000))
+    app.run(host='0.0.0.0', port=port)
