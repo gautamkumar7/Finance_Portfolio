@@ -67,7 +67,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchWishList = async () => {
       const res = await axios.get<Wishlist[]>(
-        "http://127.0.0.1:5000/api/wishlist/all"
+        "https://finance-portfolio.onrender.com/api/wishlist/all"
       );
       setWishlist(res.data);
     };
@@ -77,7 +77,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchMarket = async () => {
       const res = await axios.get<Market[]>(
-        "http://127.0.0.1:5000/api/markets"
+        "https://finance-portfolio.onrender.com/api/markets"
       );
       setMarkets(res.data);
     };
