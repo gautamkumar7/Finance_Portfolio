@@ -114,7 +114,7 @@ const Dashboard = () => {
                 key={index}
                 className={`border-2 ${
                   market.percentage_change > 0
-                    ? "border-green-600"
+                    ? "border-green-600 "
                     : "border-red-600"
                 }`}
               >
@@ -241,13 +241,12 @@ const Dashboard = () => {
               </CardContent>
             </Card>
             <div>
-              <Card className="border-green-500 bg-[#e6ffe6] border-b-0 rounded-none">
+              <Card className="border-green-500 dark:text-black dark:bg-green-200  bg-[#e6ffe6] border-b-0 rounded-b-none">
                 <CardHeader className="flex flex-col space-y-2">
-                  <CardTitle className="text-lg text-green-700">
+                  <CardTitle className="text-xl text-center font-semibold underline tracking-widest text-green-700">
                     Your Gainers
                   </CardTitle>
                 </CardHeader>
-                <CardContent></CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -275,9 +274,9 @@ const Dashboard = () => {
                   </TableBody>
                 </Table>
               </Card>
-              <Card className="border-red-500 border-t-0 bg-[#ffe8e8] rounded-no">
+              <Card className="border-red-500 border-t-0 dark:text-black dark:bg-red-300 bg-[#ffe8e8] rounded-t-none">
                 <CardHeader className="flex flex-col space-y-2">
-                  <CardTitle className="text-lg text-red-500">
+                  <CardTitle className="text-xl text-red-500 tracking-widest underline text-center">
                     Your Losers
                   </CardTitle>
                 </CardHeader>
@@ -297,8 +296,8 @@ const Dashboard = () => {
                       {gl
                         .filter((stock) => stock.percentage < 0)
                         .map((stock, index) => (
-                          <TableRow className="text-center text-xl" key={index}>
-                            <TableCell className="text-center text-xl">
+                          <TableRow className="text-center " key={index}>
+                            <TableCell className="text-center ">
                               {stock.name}
                             </TableCell>
                             <TableCell className="text-red-500">

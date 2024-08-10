@@ -116,7 +116,7 @@ const Page = () => {
                       className="col-span-3"
                     />
                   </div>
-                  <div className="grid items-center grid-cols-4 gap-4 mt-10">
+                  <div className="grid items-center grid-cols-4 gap-4">
                     <Label htmlFor="total" className="text-right font-medium">
                       Total
                     </Label>
@@ -137,7 +137,7 @@ const Page = () => {
             </Dialog>
             <Dialog>
               <DialogTrigger className="mt-4 w-1/5 text-xl h-10 hover:scale-110 transition-all duration-300 rounded-full  bg-red-700">
-                Sell
+                Buy
               </DialogTrigger>
               <DialogContent className="sm:max-w-[500px]">
                 <div className="grid gap-4 py-4">
@@ -193,9 +193,9 @@ const Page = () => {
               </DialogContent>
             </Dialog>
           </div>
-          <div className="bg-white  shadow rounded-lg p-4 w-3/4">
+          <div className=" shadow rounded-lg p-4 w-3/4 border p-2 border-gray-400 rounded">
             <h1 className="text-2xl font-bold">Transactions</h1>
-            <Table>
+            <Table className="">
               <TableHeader>
                 <TableRow>
                   <TableHead>Date</TableHead>
@@ -209,7 +209,9 @@ const Page = () => {
                 {paginatedTransactions.map((transact) => (
                   <TableRow
                     className={`${
-                      transact.action === "Sell" ? "" : "bg-slate-300"
+                      transact.action === "Sell"
+                        ? ""
+                        : "bg-slate-300 dark:bg-slate-800"
                     } `}
                     key={transact.id}
                   >
