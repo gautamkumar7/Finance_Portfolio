@@ -185,7 +185,7 @@ const Page = () => {
                 <DialogFooter>
                   <Button
                     type="submit"
-                    className="text-black bg-red-500 hover:text-white"
+                    className="text-black bg-red-500 hover:text-white hover:bg-red-500"
                   >
                     Sell Stock
                   </Button>
