@@ -80,7 +80,7 @@ def get_all_portfolios():
     else:
         return jsonify({'error': 'No portfolio data found'}), 404
 
-@portfolio_bp.route('/portfolio/addcash', methods=['POST'])
+@portfolio_bp.route('/addcash', methods=['POST'])
 def update_cash_in_portfolio():
     data = request.get_json()
     new_cash_amount = data.get('cash')

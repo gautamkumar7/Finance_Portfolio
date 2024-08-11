@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
-
 @dataclass
 class Portfolio:
+    id: int
     date: str
     cash: float
     stocks_invested: float

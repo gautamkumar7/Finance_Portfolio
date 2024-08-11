@@ -15,7 +15,6 @@ import { DownloadIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -41,12 +40,13 @@ const Page = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const [cash, setCash] = useState(0);
 
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
         const response = await axios.get<Transaction[]>(
-          "https://finance-portfolio.onrender.com/api/transactions"
+          "http://127.0.0.1:5000/api/transactions"
         );
         const data = response.data;
         setTransactions(data);
@@ -64,6 +64,18 @@ const Page = () => {
     currentPage * ITEMS_PER_PAGE
   );
 
+  const handleClick = async () => {
+    try {
+      const response = await axios.post(
+        "https://finance-portfolio.onrender.com/api/portfolio/addcash",
+        { cash: cash }
+      );
+      console.log("Cash added successfully:", response);
+    } catch (error) {
+      console.error("Error adding cash:", error);
+    }
+  };
+
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
@@ -77,125 +89,159 @@ const Page = () => {
       <Nav />
       <div className="p-4 mt-8">
         <div className="flex w-full flex-col items-center justify-center">
-          <div className="w-3/4 flex justify-center gap-5 mb-2">
-            <Dialog>
-              <DialogTrigger className="mt-4 w-1/5 text-xl h-10 hover:scale-110 transition-all duration-300 rounded-full  bg-green-500">
-                Buy
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[500px]">
-                <div className="grid gap-4 py-4">
-                  <div className="grid items-center grid-cols-4 gap-4">
-                    <Label htmlFor="stock" className="text-right">
-                      Stock
-                    </Label>
-                    <Input
-                      id="stock"
-                      placeholder="Enter stock name"
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid items-center grid-cols-4 gap-4">
-                    <Label htmlFor="quantity" className="text-right">
-                      Quantity
-                    </Label>
-                    <Input
-                      id="quantity"
-                      type="number"
-                      placeholder="Enter quantity"
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid items-center grid-cols-4 gap-4">
-                    <Label htmlFor="price" className="text-right">
-                      Price/Share
-                    </Label>
-                    <Input
-                      id="price"
-                      type="number"
-                      placeholder="Enter price"
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid items-center grid-cols-4 gap-4">
-                    <Label htmlFor="total" className="text-right font-medium">
-                      Total
-                    </Label>
-                    <div id="total" className="col-span-3 font-medium">
-                      $0.00
+          <div className="w-3/4 flex justify-right gap-5 mb-2">
+            <div className="w-full gap-4 ml-60 justify-center items-end flex">
+              <Dialog>
+                <DialogTrigger className="mt-4 w-1/5 text-xl h-10 hover:scale-110 transition-all duration-300 rounded-full  bg-green-700">
+                  Buy
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[500px]">
+                  <div className="grid gap-4 py-4">
+                    <div className="grid items-center grid-cols-4 gap-4">
+                      <Label htmlFor="stock" className="text-right">
+                        Stock
+                      </Label>
+                      <Input
+                        id="stock"
+                        placeholder="Enter stock name"
+                        className="col-span-3"
+                      />
+                    </div>
+                    <div className="grid items-center grid-cols-4 gap-4">
+                      <Label htmlFor="quantity" className="text-right">
+                        Quantity
+                      </Label>
+                      <Input
+                        id="quantity"
+                        type="number"
+                        placeholder="Enter quantity"
+                        className="col-span-3"
+                      />
+                    </div>
+                    <div className="grid items-center grid-cols-4 gap-4">
+                      <Label htmlFor="price" className="text-right">
+                        Price/Share
+                      </Label>
+                      <Input
+                        id="price"
+                        type="number"
+                        placeholder="Enter price"
+                        className="col-span-3"
+                      />
+                    </div>
+                    <div className="grid items-center grid-cols-4 gap-4">
+                      <Label htmlFor="total" className="text-right font-medium">
+                        Total
+                      </Label>
+                      <div id="total" className="col-span-3 font-medium">
+                        $0.00
+                      </div>
                     </div>
                   </div>
-                </div>
-                <DialogFooter>
-                  <Button
-                    type="submit"
-                    className="bg-green-500 text-black hover:text-white"
-                  >
-                    Buy Stock
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-            <Dialog>
-              <DialogTrigger className="mt-4 w-1/5 text-xl h-10 hover:scale-110 transition-all duration-300 rounded-full  bg-red-500">
-                Sell
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[500px]">
-                <div className="grid gap-4 py-4">
-                  <div className="grid items-center grid-cols-4 gap-4">
-                    <Label htmlFor="stock" className="text-right">
-                      Stock
-                    </Label>
-                    <Input
-                      id="stock"
-                      placeholder="Enter stock name"
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid items-center grid-cols-4 gap-4">
-                    <Label htmlFor="quantity" className="text-right">
-                      Quantity
-                    </Label>
-                    <Input
-                      id="quantity"
-                      type="number"
-                      placeholder="Enter quantity"
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid items-center grid-cols-4 gap-4">
-                    <Label htmlFor="price" className="text-right">
-                      Price/Share
-                    </Label>
-                    <Input
-                      id="price"
-                      type="number"
-                      placeholder="Enter price"
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid items-center grid-cols-4 gap-4 mt-10">
-                    <Label htmlFor="total" className="text-right font-medium">
-                      Total
-                    </Label>
-                    <div id="total" className="col-span-3 font-medium">
-                      $0.00
+                  <DialogFooter>
+                    <Button
+                      type="submit"
+                      className="bg-green-500 text-black hover:text-white"
+                    >
+                      Buy Stock
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+              <Dialog>
+                <DialogTrigger className="mt-4 w-1/5 text-xl h-10 hover:scale-110 transition-all duration-300 rounded-full  bg-red-700">
+                  Sell
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[500px]">
+                  <div className="grid gap-4 py-4">
+                    <div className="grid items-center grid-cols-4 gap-4">
+                      <Label htmlFor="stock" className="text-right">
+                        Stock
+                      </Label>
+                      <Input
+                        id="stock"
+                        placeholder="Enter stock name"
+                        className="col-span-3"
+                      />
+                    </div>
+                    <div className="grid items-center grid-cols-4 gap-4">
+                      <Label htmlFor="quantity" className="text-right">
+                        Quantity
+                      </Label>
+                      <Input
+                        id="quantity"
+                        type="number"
+                        placeholder="Enter quantity"
+                        className="col-span-3"
+                      />
+                    </div>
+                    <div className="grid items-center grid-cols-4 gap-4">
+                      <Label htmlFor="price" className="text-right">
+                        Price/Share
+                      </Label>
+                      <Input
+                        id="price"
+                        type="number"
+                        placeholder="Enter price"
+                        className="col-span-3"
+                      />
+                    </div>
+                    <div className="grid items-center grid-cols-4 gap-4 mt-10">
+                      <Label htmlFor="total" className="text-right font-medium">
+                        Total
+                      </Label>
+                      <div id="total" className="col-span-3 font-medium">
+                        $0.00
+                      </div>
                     </div>
                   </div>
-                </div>
-                <DialogFooter>
-                  <Button
-                    type="submit"
-                    className="text-black bg-red-500 hover:text-white hover:bg-red-500"
-                  >
-                    Sell Stock
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+                  <DialogFooter>
+                    <Button
+                      type="submit"
+                      className="text-black bg-red-500 hover:bg-red-500 hover:text-white"
+                    >
+                      Sell Stock
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+            <div className="w-1/4 flex justify-end h-full">
+              <Dialog>
+                <DialogTrigger className="mt-4 w-1/5 ml-10 text-xl h-10 hover:scale-110 transition-all duration-300 rounded-full bg-purple-400 dark:bg-purple-800  border-purple-600">
+                  +
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[500px] border-purple-600 border-2">
+                  <div className="grid gap-4 py-4">
+                    <div className="grid items-center grid-cols-4 gap-4">
+                      <Label htmlFor="stock" className="text-right">
+                        Amount
+                      </Label>
+                      <Input
+                        onChange={(e) => setCash(Number(e.target.value))}
+                        id="cash"
+                        value={cash}
+                        placeholder="$"
+                        className="col-span-3 outline-none"
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      onClick={handleClick}
+                      type="button"
+                      className="text-black bg-purple-500 hover:bg-purple-500 hover:text-white"
+                    >
+                      Add Cash
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
-          <div className=" shadow rounded-lg w-3/4 border p-2 border-gray-400">
+          <div className="shadow rounded-lg p-4 w-3/4 border border-gray-400">
             <h1 className="text-2xl font-bold">Transactions</h1>
-            <Table className="">
+            <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Date</TableHead>
@@ -212,7 +258,7 @@ const Page = () => {
                       transact.action === "Sell"
                         ? ""
                         : "bg-slate-300 dark:bg-slate-800"
-                    } `}
+                    }`}
                     key={transact.id}
                   >
                     <TableCell className="font-medium">

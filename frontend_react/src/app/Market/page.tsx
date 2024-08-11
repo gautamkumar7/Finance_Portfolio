@@ -23,46 +23,25 @@ type Market = {
 type Wishlist = {
   current_price: number;
   number: number;
-  previous_price: number;
-  stock_name: string;
+  previous_price?: number;
+  stock_name?: string;
+  ticker?: string;
 };
 
-type Drop = {
+type Gl = {
   name: string;
-  current_price: number;
+  percentage_change: number;
+  type: string;
 };
-
-const drop: Drop[] = [
-  { name: "Apple", current_price: 120 },
-  { name: "Tesla", current_price: 500 },
-  { name: "Microsoft", current_price: 200 },
-  { name: "Google", current_price: 300 },
-  { name: "Amazon", current_price: 150 },
-  { name: "Facebook", current_price: 100 },
-  { name: "Twitter", current_price: 50 },
-  { name: "Netflix", current_price: 70 },
-  { name: "Uber", current_price: 30 },
-  { name: "Lyft", current_price: 20 },
-];
-
-const gl = [
-  { name: "Apple", percentage: 0.5 },
-  { name: "Tesla", percentage: -0.7 },
-  { name: "Microsoft", percentage: 0.3 },
-  { name: "Google", percentage: -0.2 },
-  { name: "Amazon", percentage: 0.1 },
-  { name: "Facebook", percentage: 0.6 },
-  { name: "Twitter", percentage: -0.5 },
-  { name: "Netflix", percentage: 0.4 },
-  { name: "Uber", percentage: -0.3 },
-  { name: "Lyft", percentage: 0.2 },
-];
 
 const Dashboard = () => {
   const [search, setSearch] = useState("");
   const [dropdown, setDropdown] = useState(false);
   const [wishlist, setWishlist] = useState<Wishlist[]>([]);
   const [markets, setMarkets] = useState<Market[]>([]);
+  const [drop, setDrop] = useState<Wishlist[]>([]);
+  const [gl, setGl] = useState<Gl[]>([]);
+  const [selectedStock, setSelectedStock] = useState<Wishlist | null>(null);
 
   useEffect(() => {
     const fetchWishList = async () => {
@@ -75,6 +54,16 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
+    const fetchWishListDrop = async () => {
+      const res = await axios.get<Wishlist[]>(
+        "https://finance-portfolio.onrender.com/api/search"
+      );
+      setDrop(res.data);
+    };
+    fetchWishListDrop();
+  }, []);
+
+  useEffect(() => {
     const fetchMarket = async () => {
       const res = await axios.get<Market[]>(
         "https://finance-portfolio.onrender.com/api/markets"
@@ -84,24 +73,73 @@ const Dashboard = () => {
     fetchMarket();
   }, []);
 
+  useEffect(() => {
+    const fetchGl = async () => {
+      const res = await axios.get<Gl[]>("https://finance-portfolio.onrender.com/api/gl");
+      setGl(res.data);
+    };
+    fetchGl();
+  }, []);
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
     setDropdown(true);
   };
 
-  const handleDropdownItemClick = (name: string) => {
-    setSearch(name);
+  const handleDropdownItemClick = (stock: Wishlist) => {
+    setSelectedStock(stock);
+    setSearch(stock.stock_name || "");
     setDropdown(false);
   };
 
   const handleInputBlur = () => {
-    // Delay hiding the dropdown to allow for click events to be processed
     setTimeout(() => setDropdown(false), 200);
   };
 
   const filteredDrop = drop.filter((d) =>
-    d.name.toLowerCase().includes(search.toLowerCase())
+    d.stock_name?.toLowerCase().includes(search.toLowerCase())
   );
+
+  const handleAddToWishlist = async () => {
+    if (selectedStock) {
+      try {
+        const payload = {
+          stock_name: selectedStock.stock_name,
+          current_price: selectedStock.current_price,
+          previous_price: selectedStock.previous_price,
+          number: 1,
+        };
+        await axios.post("https://finance-portfolio.onrender.com/api/wishlist", payload);
+
+        setWishlist([...wishlist, payload]);
+        setSelectedStock(null);
+      } catch (error) {
+        console.error("Error adding to wishlist:", error);
+      }
+    }
+  };
+
+  const handleDeleteFromWishlist = async (stockName: string) => {
+    try {
+      await axios.delete("https://finance-portfolio.onrender.com/api/wishlist", {
+        data: { stock_name: stockName },
+      });
+
+      setWishlist(wishlist.filter((stock) => stock.stock_name !== stockName));
+    } catch (error) {
+      console.error("Error deleting from wishlist:", error);
+    }
+  };
+
+  const topGainers = gl
+    .filter((stock) => stock.percentage_change > 0)
+    .sort((a, b) => b.percentage_change - a.percentage_change)
+    .slice(0, 4);
+
+  const topLosers = gl
+    .filter((stock) => stock.percentage_change < 0)
+    .sort((a, b) => a.percentage_change - b.percentage_change)
+    .slice(0, 4);
 
   return (
     <>
@@ -114,7 +152,7 @@ const Dashboard = () => {
                 key={index}
                 className={`border-2 ${
                   market.percentage_change > 0
-                    ? "border-green-600 "
+                    ? "border-green-600"
                     : "border-red-600"
                 }`}
               >
@@ -150,24 +188,29 @@ const Dashboard = () => {
                     onBlur={handleInputBlur}
                   />
                   {dropdown && filteredDrop.length > 0 && search.length > 0 && (
-                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
+                    <div className="absolute dark:bg-[#1C1917] z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
                       {filteredDrop.map((stock, index) => (
                         <div
                           key={index}
-                          className="p-2 hover:bg-gray-100 cursor-pointer flex justify-between space-x-6 items-center"
-                          onClick={() => handleDropdownItemClick(stock.name)}
+                          className="p-2 hover:bg-gray-100 dark:hover:bg-[#312c28] cursor-pointer flex flex-row col-span-3 justify-between space-x-6 items-center"
+                          onClick={() => handleDropdownItemClick(stock)}
                         >
-                          <p className="font-medium">{stock.name}</p>
-                          <p className="text-sm text-gray-600">
+                          <p className="font-medium text-center w-full h-full">
+                            {stock.stock_name!}
+                          </p>
+                          <p className="text-sm w-full h-full text-gray-600 dark:text-gray-300">
                             ${stock.current_price}
                           </p>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="mr-2 bg-blue-300 hover:bg-blue-500"
-                          >
-                            Add to wishlist
-                          </Button>
+                          <div className="w-full h-full">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="mr-2 bg-blue-300 text-black hover:bg-blue-500"
+                              onClick={handleAddToWishlist}
+                            >
+                              Add to wishlist
+                            </Button>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -192,17 +235,17 @@ const Dashboard = () => {
                         <TableCell>
                           <span
                             className={
-                              stock.current_price - stock.previous_price > 0
+                              stock.current_price - stock.previous_price! > 0
                                 ? "text-green-500"
                                 : "text-red-500"
                             }
                           >
-                            {stock.current_price - stock.previous_price > 0
+                            {stock.current_price - stock.previous_price! > 0
                               ? "+"
                               : ""}
                             {(
-                              ((stock.current_price - stock.previous_price) /
-                                stock.previous_price) *
+                              ((stock.current_price - stock.previous_price!) /
+                                stock.previous_price!) *
                               100
                             ).toFixed(2)}
                             %
@@ -227,6 +270,9 @@ const Dashboard = () => {
                             size="sm"
                             variant="ghost"
                             className="mr-2 text-red-500"
+                            onClick={() =>
+                              handleDeleteFromWishlist(stock.stock_name!)
+                            }
                           >
                             Delete
                           </Button>
@@ -241,7 +287,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
             <div>
-              <Card className="border-green-500 dark:text-black dark:bg-green-200  bg-[#e6ffe6] border-b-0 rounded-b-none">
+              <Card className="border-green-500 dark:text-black dark:bg-green-200 bg-[#e6ffe6] border-b-0 rounded-b-none">
                 <CardHeader className="flex flex-col space-y-2">
                   <CardTitle className="text-xl text-center text-green-600">
                     Your Gainers
@@ -259,24 +305,22 @@ const Dashboard = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {gl
-                      .filter((stock) => stock.percentage > 0)
-                      .map((stock, index) => (
-                        <TableRow className="text-center" key={index}>
-                          <TableCell className="text-center">
-                            {stock.name}
-                          </TableCell>
-                          <TableCell className="text-green-500">
-                            +{stock.percentage}%
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                    {topGainers.map((stock, index) => (
+                      <TableRow className="text-center" key={index}>
+                        <TableCell className="text-center">
+                          {stock.name}
+                        </TableCell>
+                        <TableCell className="text-green-800">
+                          +{stock.percentage_change.toFixed(2)}%
+                        </TableCell>
+                      </TableRow>
+                    ))}
                   </TableBody>
                 </Table>
               </Card>
               <Card className="border-red-500 border-t-0 dark:text-black dark:bg-red-300 bg-[#ffe8e8] rounded-t-none">
                 <CardHeader className="flex flex-col space-y-2">
-                  <CardTitle className="text-xl text-red-500 text-center">
+                  <CardTitle className="text-xl text-red-800 text-center">
                     Your Losers
                   </CardTitle>
                 </CardHeader>
@@ -293,18 +337,16 @@ const Dashboard = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {gl
-                        .filter((stock) => stock.percentage < 0)
-                        .map((stock, index) => (
-                          <TableRow className="text-center " key={index}>
-                            <TableCell className="text-center ">
-                              {stock.name}
-                            </TableCell>
-                            <TableCell className="text-red-500">
-                              {stock.percentage}%
-                            </TableCell>
-                          </TableRow>
-                        ))}
+                      {topLosers.map((stock, index) => (
+                        <TableRow className="text-center" key={index}>
+                          <TableCell className="text-center">
+                            {stock.name}
+                          </TableCell>
+                          <TableCell className="text-red-800">
+                            {stock.percentage_change.toFixed(2)}%
+                          </TableCell>
+                        </TableRow>
+                      ))}
                     </TableBody>
                   </Table>
                 </CardContent>

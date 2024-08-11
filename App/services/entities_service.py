@@ -72,7 +72,7 @@ class EntityService:
                 'avg_buy_price': price,  # First buy, so avg_buy_price is the price itself
                 'type': 'STOCK',  # Assuming default type, can be parameterized
                 'current_price': price,  # Setting current_price as the buy price for now
-                'sector': 'Unknown'  # Default sector, can be parameterized or updated later
+                'sector': 'TECH'  # Default sector, can be parameterized or updated later
             }
 
             supabase.table('entities').insert(new_entity).execute()

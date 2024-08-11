@@ -12,10 +12,11 @@ from typing import Optional, List
 class PortfolioService:
     @staticmethod
     def get_latest_portfolio() -> Optional[Portfolio]:
-        response = supabase.table("portfolio").select("*").order('date', desc=True).limit(1).execute()
+        response = supabase.table("portfolio").select("*").order('id', desc=True).limit(1).execute()
         if response.data:
             portfolio_data = response.data[0]
             return Portfolio(
+                id=portfolio_data['id'],
                 date=portfolio_data['date'],
                 cash=portfolio_data['cash'],
                 stocks_invested=portfolio_data['stocks_invested'],
@@ -27,11 +28,12 @@ class PortfolioService:
 
     @staticmethod
     def get_all_portfolios() -> Optional[List[Portfolio]]:
-        response = supabase.table("portfolio").select("*").order('date', desc=True).execute()
+        response = supabase.table("portfolio").select("*").order('id', desc=True).execute()
         if response.data:
             portfolios = []
             for portfolio_data in response.data:
                 portfolios.append(Portfolio(
+                    id=portfolio_data['id'],
                     date=portfolio_data['date'],
                     cash=portfolio_data['cash'],
                     stocks_invested=portfolio_data['stocks_invested'],
@@ -45,8 +47,8 @@ class PortfolioService:
 
     @staticmethod
     def update_cash_in_portfolio(new_cash_amount):
-        # Fetch the last row in the portfolio table ordered by date
-        response = supabase.table('portfolio').select('*').order('date', desc=True).limit(1).execute()
+        # Fetch the last row in the portfolio table ordered by id
+        response = supabase.table('portfolio').select('*').order('id', desc=True).limit(1).execute()
 
         if response.data:
             last_row = response.data[0]
