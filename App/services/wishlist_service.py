@@ -46,11 +46,16 @@ class WishlistService:
             return False
 
     @staticmethod
-    def delete_from_wishlist(number):
-        # Implement the logic to delete the wishlist item from the database
-        response = supabase.table('wishlist').delete().eq('number', number).execute()
+    def delete_from_wishlist(stock_name: str) -> bool:
+        try:
+            # Implement the logic to delete the wishlist item from the database by stock_name
+            response = supabase.table('wishlist').delete().eq('stock_name', stock_name).execute()
 
-        if response.data:
-            return True
-        else:
+            if response.data:
+                return True
+            else:
+                return False
+        except Exception as e:
+            print(f"An error occurred: {e}")
             return False
+
