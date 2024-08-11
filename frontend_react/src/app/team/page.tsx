@@ -20,7 +20,7 @@ const teamMembers = [
   },
   {
     name: "Pavithra",
-    imageSrc: "/pavitra.jpeg",
+    imageSrc: "/Pavitra.jpeg",
     linkedIn: "https://www.linkedin.com/in/pavithra-s-3017a320b",
     github: "https://github.com/pavithra0130",
   },
