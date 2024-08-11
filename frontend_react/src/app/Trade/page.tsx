@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import axios from "axios";
-import { DownloadIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -22,6 +22,19 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+
+type BuyStock = {
+  name: string;
+  quantity: number;
+  price: number;
+};
+
+type SellStock = {
+  name: string;
+  quantity: number;
+  sell_price: number;
+};
 
 type Transaction = {
   action: "Buy" | "Sell";
@@ -41,12 +54,16 @@ const Page = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [cash, setCash] = useState(0);
+  const [dopen, setDopen] = useState(false);
+  const [sopen, setSopen] = useState(false);
+  const [buyStock, setBuyStock] = useState<BuyStock | null>(null);
+  const [sellStock, setSellStock] = useState<SellStock | null>(null);
 
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
         const response = await axios.get<Transaction[]>(
-          "http://127.0.0.1:5000/api/transactions"
+          "https://finance-portfolio.onrender.com/api/transactions"
         );
         const data = response.data;
         setTransactions(data);
@@ -67,11 +84,17 @@ const Page = () => {
   const handleClick = async () => {
     try {
       const response = await axios.post(
-        "https://finance-portfolio.onrender.com/api/portfolio/addcash",
+        "https://finance-portfolio.onrender.com/api/addcash",
         { cash: cash }
       );
+      if (response.status === 200) {
+        toast.success("Cash added successfully");
+      }
       console.log("Cash added successfully:", response);
     } catch (error) {
+      if (error) {
+        toast.error("Error adding cash");
+      }
       console.error("Error adding cash:", error);
     }
   };
@@ -84,6 +107,50 @@ const Page = () => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
 
+  const handleBuyStock = async () => {
+    if (buyStock) {
+      try {
+        const response = await axios.post(
+          "https://finance-portfolio.onrender.com/api/entities/buy",
+          buyStock
+        );
+        if (response.status === 200) {
+          toast.success("Stock bought successfully");
+        }
+        setDopen(false);
+        console.log("Stock bought successfully:", response);
+        setBuyStock(null); // Clear buy stock state after successful purchase
+      } catch (error: Error | any) {
+        if (error) {
+          toast.error("Error buying stock");
+        }
+        console.error("Error buying stock:", error);
+      }
+    }
+  };
+
+  const handleSellStock = async () => {
+    if (sellStock) {
+      try {
+        const response = await axios.post(
+          "https://finance-portfolio.onrender.com/api/entities/sell",
+          sellStock
+        );
+        if (response.status === 200) {
+          toast.success("Stock sold successfully");
+        }
+        setSopen(false);
+        console.log("Stock sold successfully:", response);
+        setSellStock(null);
+      } catch (error) {
+        if (error) {
+          toast.error("Error selling stock");
+        }
+        console.error("Error selling stock:", error);
+      }
+    }
+  };
+
   return (
     <>
       <Nav />
@@ -91,11 +158,17 @@ const Page = () => {
         <div className="flex w-full flex-col items-center justify-center">
           <div className="w-3/4 flex justify-right gap-5 mb-2">
             <div className="w-full gap-4 ml-60 justify-center items-end flex">
-              <Dialog>
-                <DialogTrigger className="mt-4 w-1/5 text-xl h-10 hover:scale-110 transition-all duration-300 rounded-full  bg-green-700">
+              <Dialog open={dopen}>
+                <DialogTrigger
+                  onClick={() => setDopen(true)}
+                  className="mt-4 w-1/5 text-xl h-10 hover:scale-110 transition-all duration-300 rounded-full bg-green-700"
+                >
                   Buy
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[500px]">
+                  <DialogHeader>
+                    <DialogTitle>Buy Stock</DialogTitle>
+                  </DialogHeader>
                   <div className="grid gap-4 py-4">
                     <div className="grid items-center grid-cols-4 gap-4">
                       <Label htmlFor="stock" className="text-right">
@@ -105,6 +178,12 @@ const Page = () => {
                         id="stock"
                         placeholder="Enter stock name"
                         className="col-span-3"
+                        onChange={(e) =>
+                          setBuyStock((prev) => ({
+                            ...prev!,
+                            name: e.target.value,
+                          }))
+                        }
                       />
                     </div>
                     <div className="grid items-center grid-cols-4 gap-4">
@@ -116,6 +195,12 @@ const Page = () => {
                         type="number"
                         placeholder="Enter quantity"
                         className="col-span-3"
+                        onChange={(e) =>
+                          setBuyStock((prev) => ({
+                            ...prev!,
+                            quantity: Number(e.target.value),
+                          }))
+                        }
                       />
                     </div>
                     <div className="grid items-center grid-cols-4 gap-4">
@@ -127,6 +212,12 @@ const Page = () => {
                         type="number"
                         placeholder="Enter price"
                         className="col-span-3"
+                        onChange={(e) =>
+                          setBuyStock((prev) => ({
+                            ...prev!,
+                            price: Number(e.target.value),
+                          }))
+                        }
                       />
                     </div>
                     <div className="grid items-center grid-cols-4 gap-4">
@@ -134,13 +225,17 @@ const Page = () => {
                         Total
                       </Label>
                       <div id="total" className="col-span-3 font-medium">
-                        $0.00
+                        $
+                        {(
+                          (buyStock?.quantity || 0) * (buyStock?.price || 0)
+                        ).toFixed(2)}
                       </div>
                     </div>
                   </div>
                   <DialogFooter>
                     <Button
-                      type="submit"
+                      type="button"
+                      onClick={handleBuyStock}
                       className="bg-green-500 text-black hover:text-white"
                     >
                       Buy Stock
@@ -148,20 +243,32 @@ const Page = () => {
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
-              <Dialog>
-                <DialogTrigger className="mt-4 w-1/5 text-xl h-10 hover:scale-110 transition-all duration-300 rounded-full  bg-red-700">
+              <Dialog open={sopen}>
+                <DialogTrigger
+                  onClick={() => setSopen(true)}
+                  className="mt-4 w-1/5 text-xl h-10 hover:scale-110 transition-all duration-300 rounded-full bg-red-700"
+                >
                   Sell
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[500px]">
+                  <DialogHeader>
+                    <DialogTitle>Sell Stock</DialogTitle>
+                  </DialogHeader>
                   <div className="grid gap-4 py-4">
                     <div className="grid items-center grid-cols-4 gap-4">
-                      <Label htmlFor="stock" className="text-right">
+                      <Label htmlFor="name" className="text-right">
                         Stock
                       </Label>
                       <Input
-                        id="stock"
+                        id="name"
                         placeholder="Enter stock name"
                         className="col-span-3"
+                        onChange={(e) =>
+                          setSellStock((prev) => ({
+                            ...prev!,
+                            name: e.target.value,
+                          }))
+                        }
                       />
                     </div>
                     <div className="grid items-center grid-cols-4 gap-4">
@@ -173,17 +280,29 @@ const Page = () => {
                         type="number"
                         placeholder="Enter quantity"
                         className="col-span-3"
+                        onChange={(e) =>
+                          setSellStock((prev) => ({
+                            ...prev!,
+                            quantity: Number(e.target.value),
+                          }))
+                        }
                       />
                     </div>
                     <div className="grid items-center grid-cols-4 gap-4">
-                      <Label htmlFor="price" className="text-right">
-                        Price/Share
+                      <Label htmlFor="sell_price" className="text-right">
+                        Sell Price
                       </Label>
                       <Input
-                        id="price"
+                        id="sell_price"
                         type="number"
-                        placeholder="Enter price"
+                        placeholder="Enter sell price"
                         className="col-span-3"
+                        onChange={(e) =>
+                          setSellStock((prev) => ({
+                            ...prev!,
+                            sell_price: Number(e.target.value),
+                          }))
+                        }
                       />
                     </div>
                     <div className="grid items-center grid-cols-4 gap-4 mt-10">
@@ -191,13 +310,18 @@ const Page = () => {
                         Total
                       </Label>
                       <div id="total" className="col-span-3 font-medium">
-                        $0.00
+                        $
+                        {(
+                          (sellStock?.quantity || 0) *
+                          (sellStock?.sell_price || 0)
+                        ).toFixed(2)}
                       </div>
                     </div>
                   </div>
                   <DialogFooter>
                     <Button
-                      type="submit"
+                      type="button"
+                      onClick={handleSellStock}
                       className="text-black bg-red-500 hover:bg-red-500 hover:text-white"
                     >
                       Sell Stock
@@ -208,13 +332,13 @@ const Page = () => {
             </div>
             <div className="w-1/4 flex justify-end h-full">
               <Dialog>
-                <DialogTrigger className="mt-4 w-1/5 ml-10 text-xl h-10 hover:scale-110 transition-all duration-300 rounded-full bg-purple-400 dark:bg-purple-800  border-purple-600">
+                <DialogTrigger className="mt-4 w-1/5 ml-10 text-xl h-10 hover:scale-110 transition-all duration-300 rounded-full bg-purple-400 dark:bg-purple-800 border-purple-600">
                   +
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[500px] border-purple-600 border-2">
                   <div className="grid gap-4 py-4">
                     <div className="grid items-center grid-cols-4 gap-4">
-                      <Label htmlFor="stock" className="text-right">
+                      <Label htmlFor="cash" className="text-right">
                         Amount
                       </Label>
                       <Input
