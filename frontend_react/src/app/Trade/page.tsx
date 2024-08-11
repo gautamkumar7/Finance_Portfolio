@@ -79,7 +79,7 @@ const Page = () => {
         <div className="flex w-full flex-col items-center justify-center">
           <div className="w-3/4 flex justify-center gap-5 mb-2">
             <Dialog>
-              <DialogTrigger className="mt-4 w-1/5 text-xl h-10 hover:scale-110 transition-all duration-300 rounded-full  bg-green-700">
+              <DialogTrigger className="mt-4 w-1/5 text-xl h-10 hover:scale-110 transition-all duration-300 rounded-full  bg-green-500">
                 Buy
               </DialogTrigger>
               <DialogContent className="sm:max-w-[500px]">
@@ -136,7 +136,7 @@ const Page = () => {
               </DialogContent>
             </Dialog>
             <Dialog>
-              <DialogTrigger className="mt-4 w-1/5 text-xl h-10 hover:scale-110 transition-all duration-300 rounded-full  bg-red-700">
+              <DialogTrigger className="mt-4 w-1/5 text-xl h-10 hover:scale-110 transition-all duration-300 rounded-full  bg-red-500">
                 Sell
               </DialogTrigger>
               <DialogContent className="sm:max-w-[500px]">
