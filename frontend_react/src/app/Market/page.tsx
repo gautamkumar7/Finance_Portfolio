@@ -243,17 +243,17 @@ const Dashboard = () => {
             <div>
               <Card className="border-green-500 dark:text-black dark:bg-green-200  bg-[#e6ffe6] border-b-0 rounded-b-none">
                 <CardHeader className="flex flex-col space-y-2">
-                  <CardTitle className="text-xl text-center font-semibold underline tracking-widest text-green-700">
+                  <CardTitle className="text-xl text-center text-green-600">
                     Your Gainers
                   </CardTitle>
                 </CardHeader>
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="text-center text-2xl font-semibold text-black">
+                      <TableHead className="text-center font-semibold text-black">
                         Stock
                       </TableHead>
-                      <TableHead className="text-center text-2xl font-semibold text-black">
+                      <TableHead className="text-center font-semibold text-black">
                         Percentage Change
                       </TableHead>
                     </TableRow>
@@ -276,7 +276,7 @@ const Dashboard = () => {
               </Card>
               <Card className="border-red-500 border-t-0 dark:text-black dark:bg-red-300 bg-[#ffe8e8] rounded-t-none">
                 <CardHeader className="flex flex-col space-y-2">
-                  <CardTitle className="text-xl text-red-500 tracking-widest underline text-center">
+                  <CardTitle className="text-xl text-red-500 text-center">
                     Your Losers
                   </CardTitle>
                 </CardHeader>
@@ -284,10 +284,10 @@ const Dashboard = () => {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="text-center text-2xl font-semibold text-black">
+                        <TableHead className="text-center font-semibold text-black">
                           Stock
                         </TableHead>
-                        <TableHead className="text-center text-2xl font-semibold text-black">
+                        <TableHead className="text-center font-semibold text-black">
                           Percentage Change
                         </TableHead>
                       </TableRow>

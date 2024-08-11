@@ -14,21 +14,21 @@ const teamMembers = [
   },
   {
     name: "Aakriti",
-    imageSrc: "/placeholder-user.jpg",
-    linkedIn: "#",
-    github: "#",
+    imageSrc: "/Aakriti.png",
+    linkedIn: "https://www.linkedin.com/in/aakriti-gupta-a03762207?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
+    github: "https://github.com/aakriti-gupta111",
   },
   {
     name: "Pavithra",
-    imageSrc: "/placeholder-user.jpg",
-    linkedIn: "#",
-    github: "#",
+    imageSrc: "/pavitra.jpeg",
+    linkedIn: "https://www.linkedin.com/in/pavithra-s-3017a320b",
+    github: "https://github.com/pavithra0130",
   },
   {
     name: "Tanya",
-    imageSrc: "/placeholder-user.jpg",
-    linkedIn: "#",
-    github: "#",
+    imageSrc: "/Tanya.png",
+    linkedIn: "https://www.linkedin.com/in/tanya-madan-61b8a8210?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+    github: "https://github.com/TanyaMadan",
   },
 ];
 

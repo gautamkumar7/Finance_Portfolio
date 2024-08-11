@@ -199,7 +199,7 @@ const Page = () => {
                     <TableCell className="font-medium">
                       <div className="flex gap-1">
                         <Dialog>
-                          <DialogTrigger className="w-8 h-8 text-xl hover:scale-110 transition-all duration-300 rounded-full text-white bg-green-700">
+                          <DialogTrigger className="w-8 h-8 text-xl hover:scale-110 transition-all duration-300 rounded-full text-white bg-green-500">
                             B
                           </DialogTrigger>
                           <DialogContent className="sm:max-w-[500px]">
@@ -265,7 +265,7 @@ const Page = () => {
                           </DialogContent>
                         </Dialog>
                         <Dialog>
-                          <DialogTrigger className="w-8 h-8 text-xl hover:scale-110 transition-all duration-300 rounded-full text-white bg-red-700">
+                          <DialogTrigger className="w-8 h-8 text-xl hover:scale-110 transition-all duration-300 rounded-full text-white bg-red-500">
                             S
                           </DialogTrigger>
                           <DialogContent className="sm:max-w-[500px]">

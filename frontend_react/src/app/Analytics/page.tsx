@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import StockPieChart from "../StockPieChart";
 import SectorPieChart from "../SectorPieChart";
 import { NetWorthGraph } from "../LineGraph";
+import AssetDistribution from "../AssetDistribution";
 
 const Page = () => {
     return (
@@ -44,6 +45,18 @@ const Page = () => {
       </CardHeader>
       <CardContent className="grid gap-2">
         <SectorPieChart />
+      </CardContent>
+    </Card>
+
+    <Card x-chunk="charts-01-chunk-2">
+      <CardHeader>
+        <CardTitle><h1>Asset Type Distribution</h1></CardTitle>
+        <CardDescription>
+          Contribution of different assets to portfolio value
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="grid gap-2">
+        <AssetDistribution/>
       </CardContent>
     </Card>
     </div>

@@ -2,7 +2,7 @@ import React from "react";
 import { BellDot } from "lucide-react";
 import Image from "next/image";
 import hero from "/public/hero.jpeg";
-import landing from "/public/landing.jpeg";
+import logo from "/public/logo.jpeg";
 import Link from "next/link";
 import ThemeToggleButton from "./ThemeToggleButton";
 import {
@@ -28,21 +28,21 @@ const Nav = () => {
               <DropdownMenuTrigger>
                 <Image
                   className="rounded-full cursor-pointer"
-                  src={hero}
+                  src={logo}
                   layout="fill"
                   objectFit="cover"
-                  alt="Gautam"
+                  alt="ProfileX"
                 />
               </DropdownMenuTrigger>
               <DropdownMenuContent className="mt-4 mr-10">
                 <DropdownMenuItem>
-                  <Link href="/team">My Teamates</Link>
+                  <Link href="/team">Developers</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                 <Link href="/SettingsP">Settings</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                <Link href="#">Take a Tour</Link>
+                <Link href="https://drive.google.com/file/d/1rOLQXcqIpI2jKm4McM3e6T0trfU7ar93/view?usp=sharing">Take a Tour</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
