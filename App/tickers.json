@@ -1,0 +1,12 @@
+[
+    {"name": "Apple", "ticker": "AAPL"},
+    {"name": "Tesla", "ticker": "TSLA"},
+    {"name": "Microsoft", "ticker": "MSFT"},
+    {"name": "Google", "ticker": "GOOGL"},
+    {"name": "Amazon", "ticker": "AMZN"},
+    {"name": "Facebook", "ticker": "META"},
+    {"name": "Twitter", "ticker": "TWTR"},
+    {"name": "Netflix", "ticker": "NFLX"},
+    {"name": "Uber", "ticker": "UBER"},
+    {"name": "Lyft", "ticker": "LYFT"}
+]

@@ -150,24 +150,28 @@ const Dashboard = () => {
                     onBlur={handleInputBlur}
                   />
                   {dropdown && filteredDrop.length > 0 && search.length > 0 && (
-                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
+                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg dark:bg-[#1C1917]">
                       {filteredDrop.map((stock, index) => (
                         <div
                           key={index}
-                          className="p-2 hover:bg-gray-100 cursor-pointer flex justify-between space-x-6 items-center"
+                          className="p-2 hover:bg-gray-100 dark:hover:bg-[#312c28] cursor-pointer flex flex-row col-span-3 justify-between space-x-6 items-center"
                           onClick={() => handleDropdownItemClick(stock.name)}
                         >
-                          <p className="font-medium">{stock.name}</p>
-                          <p className="text-sm text-gray-600">
+                          <p className="font-medium text-center w-full h-full">
+                            {stock.name}
+                          </p>
+                          <p className="text-sm w-full h-full text-gray-600 dark:text-gray-300">
                             ${stock.current_price}
                           </p>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="mr-2 bg-blue-300 hover:bg-blue-500"
-                          >
-                            Add to wishlist
-                          </Button>
+                          <div className="w-full h-full">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="mr-2  bg-blue-300 text-black hover:bg-blue-500"
+                            >
+                              Add to wishlist
+                            </Button>
+                          </div>
                         </div>
                       ))}
                     </div>
