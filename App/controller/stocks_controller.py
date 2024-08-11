@@ -14,9 +14,6 @@ stock_service = StockService(tickers_file_path)
 
 @stock_controller.route('/search', methods=['GET'])
 def search_stocks():
-    query = request.args.get('query', '')
-    if not query:
-        return jsonify({"error": "No query provided"}), 400
-
-    results = stock_service.search_stocks(query)
+    # Get stock data for all known tickers
+    results = stock_service.search_all_stocks()
     return jsonify(results)

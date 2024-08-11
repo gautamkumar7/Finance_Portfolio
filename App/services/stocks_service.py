@@ -15,26 +15,24 @@ class StockService:
             tickers_data = json.load(file)
         return {item['name']: item['ticker'] for item in tickers_data}
 
-    def get_stock_data(self, ticker):
+    def get_stock_price(self, ticker):
         stock = yf.Ticker(ticker)
         try:
-            # Get current price
-            history = stock.history(period='1d')
-            current_price = history['Close'].iloc[-1]
-
-            # Get previous price
-            previous_price = None
-            if len(history) > 1:
-                previous_price = history['Close'].iloc[-2]
+            current_price = stock.history(period='1d')['Close'].iloc[-1]
         except IndexError:
             current_price = None
-            previous_price = None
-        return current_price, previous_price
+        return current_price
 
-    def search_stocks(self, query):
+    def search_all_stocks(self):
         results = []
-        for name, ticker in self.known_tickers.items():
-            if query.lower() in name.lower():
-                current_price, previous_price = self.get_stock_data(ticker)
-                results.append(Stock(name, ticker, current_price, previous_price).to_dict())
+        for stock_name, ticker in self.known_tickers.items():
+            stock = yf.Ticker(ticker)
+            current_price = self.get_stock_price(ticker)
+            previous_price = None
+            try:
+                history = stock.history(period='5d')
+                previous_price = history['Close'].iloc[-2]
+            except IndexError:
+                previous_price = None
+            results.append(Stock(stock_name, ticker, current_price, previous_price).to_dict())
         return results
